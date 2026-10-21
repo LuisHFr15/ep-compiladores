@@ -1,0 +1,89 @@
+Arquivo: tests/input_programs/prog001_divisoes.cob
+
+=== Fluxo de tokens (77) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      15     8     KEYWORD          IDENTIFICATION
+2      15     23    KEYWORD          DIVISION
+3      15     31    PERIOD           .
+4      16     8     KEYWORD          PROGRAM-ID
+5      16     18    PERIOD           .
+6      16     20    IDENT            PROG0001
+7      16     28    PERIOD           .
+8      19     8     IDENT            AUTHOR
+9      19     14    PERIOD           .
+10     19     16    IDENT            ENIO
+11     19     21    IDENT            BASSO
+12     19     26    PERIOD           .
+13     20     8     IDENT            INSTALLATION
+14     20     20    PERIOD           .
+15     20     22    IDENT            EBASSO
+16     20     28    LPAREN           (
+17     20     29    IDENT            DOT
+18     20     32    RPAREN           )
+19     20     33    IDENT            NET
+20     20     36    PERIOD           .
+21     21     8     IDENT            DATE-WRITTEN
+22     21     20    PERIOD           .
+23     21     22    IDENT            2018-02-24
+24     21     32    PERIOD           .
+25     22     8     IDENT            DATE-COMPILED
+26     22     21    PERIOD           .
+27     22     23    IDENT            2018-02-24
+28     22     33    PERIOD           .
+29     23     8     IDENT            SECURITY
+30     23     16    PERIOD           .
+31     23     18    IDENT            O
+32     23     20    IDENT            PROGRAMA
+33     23     29    IDENT            USA
+34     23     33    IDENT            CRIPTOGRAFIA
+35     23     46    IDENT            XPTO
+36     23     50    PERIOD           .
+37     24     8     IDENT            REMARKS
+38     24     15    PERIOD           .
+39     24     17    IDENT            O
+40     24     19    IDENT            PROGRAMA
+41     24     28    IDENT            RECEBE
+42     24     35    IDENT            UM
+43     24     38    IDENT            VALOR
+44     24     44    IDENT            E
+45     24     46    IDENT            IMPRIME
+46     24     54    IDENT            NA
+47     24     57    IDENT            TELA
+48     24     61    PERIOD           .
+49     27     8     KEYWORD          ENVIRONMENT
+50     27     20    KEYWORD          DIVISION
+51     27     28    PERIOD           .
+52     29     8     IDENT            CONFIGURATION
+53     29     22    KEYWORD          SECTION
+54     29     29    PERIOD           .
+55     37     8     IDENT            INPUT-OUTPUT
+56     37     21    KEYWORD          SECTION
+57     37     28    PERIOD           .
+58     46     8     KEYWORD          DATA
+59     46     13    KEYWORD          DIVISION
+60     46     21    PERIOD           .
+61     53     8     KEYWORD          PROCEDURE
+62     53     18    KEYWORD          DIVISION
+63     53     26    PERIOD           .
+64     54     8     IDENT            MAIN-PROCEDURE
+65     54     22    PERIOD           .
+66     55     13    KEYWORD          DISPLAY
+67     55     21    STRING           "Hello world"
+68     56     13    KEYWORD          DISPLAY
+69     56     21    STRING           "Enio Basso - 2"
+70     57     13    KEYWORD          STOP
+71     57     18    KEYWORD          RUN
+72     57     21    PERIOD           .
+73     58     8     IDENT            END
+74     58     12    IDENT            PROGRAM
+75     58     20    IDENT            PROG0001
+76     58     28    PERIOD           .
+77     59     1     EOF              
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: PROG0001
+
+Resultado: SUCESSO
