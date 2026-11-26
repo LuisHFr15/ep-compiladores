@@ -54,6 +54,10 @@ func (l *Lexer) Tokenize() *TokenStream {
 			}
 		case ' ', '-':
 		default:
+			if isMergeMarker(line) {
+				l.errorf(lineNo, 1, "marcador de conflito de merge do git no fonte: resolva o conflito")
+				continue
+			}
 			l.errorf(lineNo, 7, "indicador inválido na coluna 7: '%c'", indicator)
 		}
 
@@ -367,4 +371,14 @@ func isWordChar(c rune, allowUnderscore bool) bool {
 		return allowUnderscore
 	}
 	return isLetter(c) || isDigit(c) || c == '-'
+}
+
+func isMergeMarker(line []rune) bool {
+	text := string(line)
+	for _, m := range []string{"<<<<<<<", "=======", ">>>>>>>"} {
+		if strings.HasPrefix(text, m) {
+			return true
+		}
+	}
+	return false
 }
