@@ -177,6 +177,12 @@ func (in *Info) addItem(item *ast.DataItem, parent *Symbol) *Symbol {
 	}
 	in.Symbols = append(in.Symbols, sym)
 
+	switch item.Usage {
+	case "", "DISPLAY":
+	default:
+		in.errorf(item.Pos, "USAGE %s não suportado (apenas DISPLAY)", item.Usage)
+	}
+
 	if item.Name != "" {
 		key := fmt.Sprintf("%p/%s", parent, item.Name)
 		if in.seen[key] {
