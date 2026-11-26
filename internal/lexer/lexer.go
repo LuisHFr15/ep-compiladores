@@ -28,6 +28,8 @@ type Lexer struct {
 	picture bool
 	debug   bool
 	open    *openLiteral
+	lastLn  int
+	lastEnd int
 }
 
 func New(input string, debug bool) *Lexer {
@@ -63,8 +65,11 @@ func (l *Lexer) Tokenize() *TokenStream {
 			} else {
 				l.closeUnterminated()
 			}
+		} else if indicator == '-' {
+			pos = l.continueWord(code)
 		}
 		l.scan(code, pos, lineNo)
+		l.markLineEnd(code, lineNo)
 	}
 
 	if l.open != nil {
@@ -225,6 +230,46 @@ func (l *Lexer) resumeLiteral(code []rune, lineNo int) int {
 	}
 	l.errorf(lineNo, i+codeStart, "continuação de literal deve iniciar com aspa (%c)", l.open.quote)
 	l.closeUnterminated()
+	return i
+}
+
+func (l *Lexer) markLineEnd(code []rune, lineNo int) {
+	end := len(code)
+	for end > 0 && (code[end-1] == ' ' || code[end-1] == '\t') {
+		end--
+	}
+	l.lastLn = lineNo
+	l.lastEnd = end + codeStart
+}
+
+func (l *Lexer) continueWord(code []rune) int {
+	n := len(l.stream.Tokens)
+	if n == 0 {
+		return 0
+	}
+	prev := &l.stream.Tokens[n-1]
+	if prev.Line != l.lastLn || prev.Col+len([]rune(prev.Literal)) != l.lastEnd {
+		return 0
+	}
+	if prev.Type != token.IDENT && !token.IsKeyword(prev.Type) {
+		return 0
+	}
+	i := 0
+	for i < len(code) && (code[i] == ' ' || code[i] == '\t') {
+		i++
+	}
+	start := i
+	for i < len(code) && isWordChar(code[i], false) {
+		i++
+	}
+	if i == start || !isLetter(code[start]) && !isDigit(code[start]) {
+		return 0
+	}
+	prev.Literal += strings.ToUpper(string(code[start:i]))
+	prev.Type = token.LookupWord(prev.Literal)
+	if prev.Type == token.IDENT {
+		l.validateIdentifier(prev.Literal, prev.Line, prev.Col)
+	}
 	return i
 }
 
