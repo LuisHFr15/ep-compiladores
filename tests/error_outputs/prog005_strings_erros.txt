@@ -1,0 +1,250 @@
+Arquivo: tests/error_programs/prog005_strings_erros.cob
+
+=== Fluxo de tokens (238) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      11     8     KEYWORD          IDENTIFICATION
+2      11     23    KEYWORD          DIVISION
+3      11     31    PERIOD           .
+4      12     8     KEYWORD          PROGRAM-ID
+5      12     18    PERIOD           .
+6      12     20    IDENT            PROG008_STRING
+7      12     34    PERIOD           .
+8      13     8     KEYWORD          DATA
+9      13     13    KEYWORD          DIVISION
+10     13     21    PERIOD           .
+11     14     8     IDENT            FILE
+12     14     13    KEYWORD          SECTION
+13     14     20    PERIOD           .
+14     15     8     IDENT            WORKING-STORAGE
+15     15     24    KEYWORD          SECTION
+16     15     31    PERIOD           .
+17     17     8     NUMBER           77
+18     17     11    IDENT            SAUX
+19     17     27    KEYWORD          PIC
+20     17     31    PICTURE-STRING   X(15)
+21     17     36    PERIOD           .
+22     18     8     NUMBER           77
+23     18     11    IDENT            WS
+24     18     14    IDENT            CONT
+25     18     27    KEYWORD          PIC
+26     18     31    PICTURE-STRING   9(2)
+27     18     35    PERIOD           .
+28     19     8     NUMBER           77
+29     19     11    IDENT            YESNO
+30     19     27    KEYWORD          PIC
+31     19     31    PICTURE-STRING   9
+32     19     32    PERIOD           .
+33     21     8     NUMBER           77
+34     21     11    IDENT            IDX
+35     21     15    KEYWORD          PIC
+36     21     19    PICTURE-STRING   9(1)
+37     21     23    PERIOD           .
+38     23     8     KEYWORD          PROCEDURE
+39     23     18    KEYWORD          DIVISION
+40     23     26    PERIOD           .
+41     24     8     IDENT            MAIN-PROCEDURE
+42     24     22    PERIOD           .
+43     25     13    KEYWORD          MOVE
+44     25     18    STRING           "HELLO WORLD 123!!"
+45     25     38    IDENT            TO
+46     25     41    IDENT            SAUX
+47     25     45    PERIOD           .
+48     27     13    KEYWORD          DISPLAY
+49     27     21    STRING           " "
+50     27     24    PERIOD           .
+51     28     13    KEYWORD          DISPLAY
+52     28     21    STRING           "==== EXEMPLO 1 ===="
+53     28     42    PERIOD           .
+54     29     13    KEYWORD          DISPLAY
+55     29     21    STRING           "SAUX='"
+56     29     30    IDENT            SAUX
+57     29     35    STRING           "'"
+58     29     38    PERIOD           .
+59     31     13    KEYWORD          MOVE
+60     31     18    NUMBER           0
+61     31     20    IDENT            TO
+62     31     23    IDENT            CONT
+63     31     27    PERIOD           .
+64     32     13    IDENT            INSPECT
+65     32     21    IDENT            SAUX
+66     32     26    IDENT            TALLYING
+67     32     35    IDENT            CONT
+68     32     40    IDENT            FOR
+69     32     44    IDENT            CHARACTERS
+70     32     54    PERIOD           .
+71     33     13    KEYWORD          DISPLAY
+72     33     21    STRING           "CONT="
+73     33     29    IDENT            CONT
+74     33     34    STRING           " - FOR CHARACTERS"
+75     33     53    PERIOD           .
+76     35     13    KEYWORD          MOVE
+77     35     18    NUMBER           0
+78     35     20    IDENT            TO
+79     35     23    IDENT            CONT
+80     35     27    PERIOD           .
+81     36     13    IDENT            INSPECT
+82     36     21    IDENT            SAUX
+83     36     26    IDENT            TALLYING
+84     36     35    IDENT            CONT
+85     36     40    IDENT            FOR
+86     36     44    IDENT            ALL
+87     36     48    STRING           "L"
+88     36     51    PERIOD           .
+89     37     13    KEYWORD          DISPLAY
+90     37     21    STRING           "CONT="
+91     37     29    IDENT            CONT
+92     37     34    STRING           " - FOR ALL 'L'"
+93     37     50    PERIOD           .
+94     39     13    KEYWORD          MOVE
+95     39     18    NUMBER           0
+96     39     20    IDENT            TO
+97     39     23    IDENT            CONT
+98     39     27    PERIOD           .
+99     40     13    IDENT            INSPECT
+100    40     21    IDENT            SAUX
+101    40     26    IDENT            TALLYING
+102    40     35    IDENT            CONT
+103    41     21    IDENT            FOR
+104    41     25    IDENT            CHARACTERS
+105    41     36    IDENT            BEFORE
+106    41     43    IDENT            INITIAL
+107    41     51    STRING           " "
+108    41     54    PERIOD           .
+109    42     13    KEYWORD          DISPLAY
+110    42     21    STRING           "CONT="
+111    42     29    IDENT            CONT
+112    42     34    STRING           " - BEFORE INITIAL ' '"
+113    42     57    PERIOD           .
+114    44     13    KEYWORD          MOVE
+115    44     18    NUMBER           0
+116    44     20    IDENT            TO
+117    44     23    IDENT            CONT
+118    44     27    PERIOD           .
+119    45     13    IDENT            INSPECT
+120    45     21    IDENT            SAUX
+121    45     26    IDENT            TALLYING
+122    45     35    IDENT            CONT
+123    46     21    IDENT            FOR
+124    46     25    IDENT            CHARACTERS
+125    46     36    IDENT            AFTER
+126    46     42    IDENT            INITIAL
+127    46     50    STRING           " "
+128    46     53    PERIOD           .
+129    47     13    KEYWORD          DISPLAY
+130    47     21    STRING           "CONT="
+131    47     29    IDENT            CONT
+132    47     34    STRING           " - AFTER INITIAL ' '"
+133    47     56    PERIOD           .
+134    49     13    KEYWORD          MOVE
+135    49     18    NUMBER           0
+136    49     20    IDENT            TO
+137    49     23    IDENT            YESNO
+138    49     28    PERIOD           .
+139    50     13    IDENT            INSPECT
+140    50     21    IDENT            SAUX
+141    50     26    IDENT            TALLYING
+142    50     35    IDENT            YESNO
+143    51     21    IDENT            FOR
+144    51     25    IDENT            LEADING
+145    51     33    STRING           "H"
+146    51     36    PERIOD           .
+147    52     13    KEYWORD          DISPLAY
+148    52     21    STRING           "YESNO="
+149    52     30    IDENT            YESNO
+150    52     36    STRING           " - FOR LEADING 'H' 0=N / 1=Y"
+151    52     66    PERIOD           .
+152    54     13    IDENT            INSPECT
+153    54     21    IDENT            SAUX
+154    54     26    IDENT            REPLACING
+155    54     36    IDENT            FIRST
+156    54     42    STRING           "E"
+157    54     46    IDENT            BY
+158    54     49    STRING           "A"
+159    54     52    PERIOD           .
+160    55     13    KEYWORD          DISPLAY
+161    55     21    STRING           "SAUX='"
+162    55     30    IDENT            SAUX
+163    55     35    STRING           "' - REPLACING FIRST 'E' BY 'A'"
+164    55     67    PERIOD           .
+165    57     13    IDENT            INSPECT
+166    57     21    IDENT            SAUX
+167    57     26    IDENT            REPLACING
+168    57     36    IDENT            ALL
+169    57     40    STRING           "LLO"
+170    57     46    IDENT            BY
+171    57     49    STRING           "PPY"
+172    57     54    PERIOD           .
+173    58     13    KEYWORD          DISPLAY
+174    58     21    STRING           "SAUX='"
+175    58     30    IDENT            SAUX
+176    58     35    STRING           "' - REPLACING ALL 'LLO' BY 'PPY'"
+177    58     69    PERIOD           .
+178    60     13    KEYWORD          MOVE
+179    60     18    STRING           " HOLA-DAY"
+180    60     30    IDENT            TO
+181    60     33    IDENT            SAUX
+182    60     37    PERIOD           .
+183    61     13    IDENT            INSPECT
+184    61     21    IDENT            SAUX
+185    61     26    IDENT            REPLACING
+186    61     36    IDENT            ALL
+187    61     40    STRING           "HOLA"
+188    61     47    IDENT            BY
+189    61     50    STRING           "GOOD"
+190    62     21    IDENT            AFTER
+191    62     27    IDENT            INITIAL
+192    62     35    STRING           " "
+193    62     39    IDENT            BEFORE
+194    62     46    IDENT            INITIAL
+195    62     54    STRING           "-"
+196    62     57    PERIOD           .
+197    63     13    KEYWORD          DISPLAY
+198    63     21    STRING           "SAUX='"
+199    63     30    IDENT            SAUX
+200    63     35    STRING           "' - HOLA-DAY TO GOOD-DAY'"
+201    63     62    PERIOD           .
+202    65     13    KEYWORD          MOVE
+203    65     18    STRING           "HELLO WORLD"
+204    65     32    IDENT            TO
+205    65     35    IDENT            SAUX
+206    65     39    PERIOD           .
+207    66     13    IDENT            INSPECT
+208    66     21    IDENT            SAUX
+209    66     26    IDENT            CONVERTING
+210    66     37    STRING           "ABCDEFGHIJKLMNOPQRSTUVWXZ"
+211    67     17    IDENT            TO
+212    67     20    STRING           "abcdefghijklmnopqrstuvwxz"
+213    67     47    PERIOD           .
+214    68     13    KEYWORD          DISPLAY
+215    68     21    STRING           "SAUX='"
+216    68     30    IDENT            SAUX
+217    68     35    STRING           "' - CONVERTING'"
+218    68     52    PERIOD           .
+219    70     13    IDENT            INSPECT
+220    70     21    IDENT            SAUX
+221    70     26    IDENT            REPLACING
+222    70     36    IDENT            CHARACTERS
+223    70     47    IDENT            BY
+224    70     50    STRING           "F"
+225    70     53    PERIOD           .
+226    71     13    KEYWORD          DISPLAY
+227    71     21    STRING           "SAUX='"
+228    71     30    IDENT            SAUX
+229    71     35    STRING           "' - REPLACING "
+230    71     51    PERIOD           .
+231    73     12    KEYWORD          STOP
+232    73     17    KEYWORD          RUN
+233    73     20    PERIOD           .
+234    75     8     IDENT            END
+235    75     12    IDENT            PROGRAM
+236    75     20    IDENT            PROG008_STRING
+237    75     34    PERIOD           .
+238    76     1     EOF              
+
+=== Erros léxicos (1) ===
+[E] linha 18, col 13: caractere inválido '_'
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: PROG008_STRING
+
+Resultado: FALHA (1 erros léxicos)
