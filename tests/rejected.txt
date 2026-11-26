@@ -9,3 +9,4 @@ sem003_destinos 'FALTA' não declarado
 sem004_arquivos 'ARQ-INEXISTENTE' não declarado em FILE-CONTROL
 sem004_arquivos sem descritor FD
 sem004_arquivos arquivo do registro 'REG-OUTRO'
+CAD0002A caractere inválido ':'
