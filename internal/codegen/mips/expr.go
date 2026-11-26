@@ -24,35 +24,61 @@ func flagsOf(sym *semantic.Symbol) int {
 	return f
 }
 
+type dynOff struct {
+	e      ast.Expr
+	stride int
+}
+
+func (g *gen) refSize(r *ast.Ref) int {
+	sym := g.symOf(r)
+	if r.Start == nil {
+		return sym.ElemSize
+	}
+	if l, ok := r.Len.(*ast.NumLit); ok {
+		n, _ := strconv.Atoi(l.Text)
+		return n
+	}
+	if st, ok := r.Start.(*ast.NumLit); ok {
+		n, _ := strconv.Atoi(st.Text)
+		return sym.ElemSize - (n - 1)
+	}
+	return sym.ElemSize
+}
+
 func (g *gen) addrOf(reg string, r *ast.Ref) {
 	sym := g.symOf(r)
 	off := sym.Addr()
-	dynamic := false
+	var dyns []dynOff
 	for k, sub := range r.Subs {
 		if lit, ok := sub.(*ast.NumLit); ok {
 			v, _ := strconv.Atoi(lit.Text)
 			off += (v - 1) * sym.Strides[k]
 		} else {
-			dynamic = true
+			dyns = append(dyns, dynOff{sub, sym.Strides[k]})
 		}
 	}
-	if !dynamic {
+	if r.Start != nil {
+		if lit, ok := r.Start.(*ast.NumLit); ok {
+			v, _ := strconv.Atoi(lit.Text)
+			off += v - 1
+		} else {
+			dyns = append(dyns, dynOff{r.Start, 1})
+		}
+	}
+	if len(dyns) == 0 {
 		g.addrReg(reg, off)
 		return
 	}
 	g.ins("addiu $sp, $sp, -4")
 	g.ins("sw $zero, 0($sp)")
-	for k, sub := range r.Subs {
-		if _, ok := sub.(*ast.NumLit); ok {
-			continue
-		}
+	for _, d := range dyns {
 		save := g.tmp
-		num := g.evalNum(sub)
+		num := g.evalNum(d.e)
 		g.tmp = save
 		g.ins("la $a0, %s", num)
 		g.call("rt_num_to_int")
 		g.ins("addiu $v0, $v0, -1")
-		g.ins("li $t0, %d", sym.Strides[k])
+		g.ins("li $t0, %d", d.stride)
 		g.ins("mul $v0, $v0, $t0")
 		g.ins("lw $t1, 0($sp)")
 		g.ins("addu $t1, $t1, $v0")
@@ -94,11 +120,11 @@ func (g *gen) numConst(text string) string {
 
 func (g *gen) isNumeric(e ast.Expr) bool {
 	switch e := e.(type) {
-	case *ast.NumLit, *ast.Binary, *ast.Neg:
+	case *ast.NumLit, *ast.Binary, *ast.Neg, *ast.LengthOf:
 		return true
 	case *ast.Ref:
 		if sym := g.symOf(e); sym != nil {
-			return sym.Cat == semantic.CatNumeric
+			return sym.Cat == semantic.CatNumeric && e.Start == nil
 		}
 	}
 	return false
@@ -114,9 +140,12 @@ func (g *gen) loadNum(dst string, r *ast.Ref) {
 	g.ins("la $a0, %s", dst)
 	size := sym.ElemSize
 	flags := 0
-	if sym.Pic != nil {
+	if sym.Pic != nil && r.Start == nil {
 		size = sym.Pic.Size
 		flags = flagsOf(sym)
+	}
+	if r.Start != nil {
+		size = g.refSize(r)
 	}
 	g.ins("li $a2, %d", size)
 	g.ins("li $a3, %d", flags)
@@ -142,6 +171,13 @@ func (g *gen) evalNum(e ast.Expr) string {
 		t := g.newTmp()
 		g.loadNum(t, e)
 		return t
+	case *ast.LengthOf:
+		sym := g.symOf(e.Ref)
+		n := g.refSize(e.Ref)
+		if e.Ref.Start == nil && sym.Occurs > 0 && len(e.Ref.Subs) == 0 {
+			n = sym.Total()
+		}
+		return g.numConst(strconv.Itoa(n))
 	case *ast.Neg:
 		x := g.evalNum(e.X)
 		t := g.newTmp()
@@ -193,7 +229,9 @@ func (g *gen) strOf(e ast.Expr) strOpnd {
 		text := strings.TrimLeft(e.Text, "+-")
 		return strOpnd{label: g.strLabel(text), size: len(text)}
 	case *ast.Ref:
-		return strOpnd{ref: e, size: g.symOf(e).ElemSize}
+		return strOpnd{ref: e, size: g.refSize(e)}
+	case *ast.Figurative:
+		return strOpnd{label: g.bytesLabel("S", []byte{figByte(e.Kind)}), size: 1}
 	case *ast.FuncCall:
 		arg := g.strOf(e.Args[0])
 		buf := g.newLabel("UP")
@@ -201,7 +239,11 @@ func (g *gen) strOf(e ast.Expr) strOpnd {
 		g.loadStr("$a1", arg)
 		g.ins("la $a0, %s", buf)
 		g.ins("li $a2, %d", arg.size)
-		g.call("rt_upper")
+		if e.Name == "REVERSE" {
+			g.call("rt_reverse")
+		} else {
+			g.call("rt_upper")
+		}
 		return strOpnd{label: buf, size: arg.size}
 	}
 	g.errf(e.Position(), "operando alfanumérico não suportado")

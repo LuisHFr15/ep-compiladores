@@ -125,7 +125,7 @@ Todos `E`, no formato `[E] linha L, col C: mensagem`: caractere inválido, `_` f
 
 ### Sintaxe
 
-Reconhece `IDENTIFICATION` (inclusive `AUTHOR`, `REMARKS`…), `ENVIRONMENT` (`SPECIAL-NAMES`, `SELECT`), `DATA` (`FD`, níveis `01`–`49` e `77`, `PIC`, `VALUE(S)`, `OCCURS`, `INDEXED BY`, `USAGE`) e `PROCEDURE` com seções e parágrafos. Comandos: `DISPLAY`, `ACCEPT`, `MOVE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `DIVIDE`, `COMPUTE` (com `GIVING`, `REMAINDER`, `ON SIZE ERROR`), `IF/ELSE` (com ou sem `END-IF`), `EVALUATE`, `PERFORM` (simples e `UNTIL`, `THRU`), `GO TO`, `SET`, `SEARCH`, `INSPECT`, `OPEN`, `CLOSE`, `READ`, `WRITE`, `START`, `STOP RUN`, `GOBACK`, `EXIT`, `CONTINUE` e `FUNCTION UPPER-CASE`. Expressões com `**`, `* /`, `+ -`; condições com `AND/OR/NOT`, relacionais por símbolo ou palavra (`EQUAL`, `GREATER`…), condição abreviada e `IS NUMERIC`.
+Reconhece `IDENTIFICATION` (inclusive `AUTHOR`, `REMARKS`…), `ENVIRONMENT` (`SPECIAL-NAMES`, `SELECT`), `DATA` (`FD`, níveis `01`–`49` e `77`, `PIC`, `VALUE(S)`, `OCCURS`, `INDEXED BY`, `USAGE`) e `PROCEDURE` com seções e parágrafos. Comandos: `DISPLAY`, `ACCEPT`, `MOVE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `DIVIDE`, `COMPUTE` (com `GIVING`, `REMAINDER`, `ON SIZE ERROR`), `IF/ELSE` (com ou sem `END-IF`), `EVALUATE`, `PERFORM` (simples, `UNTIL`, `THRU`, `VARYING` e em linha com `END-PERFORM`), `INITIALIZE` (com `REPLACING`), `GO TO`, `SET`, `SEARCH`, `INSPECT`, `OPEN`, `CLOSE`, `READ`, `WRITE`, `START`, `STOP RUN`, `GOBACK`, `EXIT`, `CONTINUE` e `FUNCTION UPPER-CASE`. Expressões com `**`, `* /`, `+ -`; condições com `AND/OR/NOT`, relacionais por símbolo ou palavra (`EQUAL`, `GREATER`…), condição abreviada e `IS NUMERIC`.
 
 ### Semântica (§4)
 
@@ -166,7 +166,9 @@ Também são verificados: identificador não declarado, subscritos faltando ou s
 | Não diferencia maiúsculas de minúsculas | Padrão COBOL; literais são preservados. |
 | Linhas `D` ignoradas; `-debug` as inclui | Padrão COBOL. |
 | Saídas de referência do **GnuCOBOL** (`-std=ibm`) | Fonte de verdade para `DISPLAY` de campos com sinal, `ACCEPT` numérico e arquivos. |
-| `CAD0002A`, `CAD0005A`, `PROG024A` rejeitados | `COPY` de copybooks inexistentes e `CALL 'PROGDATA'`; marcadores de merge no fonte. |
+| `PROG024A` rejeitado | `COPY` do copybook `COD001A` (inexistente) e `CALL 'PROGDATA'`. |
+| `CAD0005A` com o conflito de merge resolvido | O fonte tinha `<<<<<<< HEAD`/`=======`/`>>>>>>>` nas linhas 97–101; ficou o lado `HEAD` (os dois lados eram o mesmo `DISPLAY`, mudava só um espaço). O erro continua coberto por `tests/lexical_programs/lex002_conflito_merge.cob`. |
+| `COPY002A.cpy` inferido do uso | O copybook de `CAD0002A` não existe no repositório; foi criado a partir dos nomes e tamanhos que o programa usa. |
 
 ---
 
@@ -181,7 +183,7 @@ Os programas de validação estão em `tests/input_programs/`: os 7 do professor
 | `scripts/run-error-tests.sh` | Confere os erros léxicos inseridos (`tests/error_programs/`), os erros semânticos (`tests/semantic_programs/`) e a rejeição dos 3 programas de `tests/rejected.txt`. |
 | `scripts/gen-reference.sh` | Regenera `tests/expected/` com o `cobc`. |
 
-Resultado atual: **11/11** programas com saída idêntica à do GnuCOBOL; **7/7** programas com erros léxicos detectados; **11/11** rejeições esperadas.
+Resultado atual: **14/14** programas com saída idêntica à do GnuCOBOL; **7/7** programas com erros léxicos detectados; **12/12** rejeições esperadas; **2/2** programas aceitos (texto livre e `COPY REPLACING`).
 
 | Programa | Recursos |
 |---|---|
@@ -190,13 +192,16 @@ Resultado atual: **11/11** programas com saída idêntica à do GnuCOBOL; **7/7*
 | `prog006`, `CAD0004A`, `BUSCA01A` | Arquivos sequenciais e de linha |
 | `prog007` | Arquivo indexado, `START`, `INVALID KEY`, `EVALUATE`, `FILE STATUS` |
 | `CAIXAREG`, `CALCMD01` | Decimais, `COMPUTE`, `PERFORM` recursivo |
+| `CAD0002A` | `COPY`, `LINKAGE`/`USING`/`GOBACK`, referência por posição `X(i:n)`, `PERFORM VARYING`, `INITIALIZE`, `EVALUATE` com `WHEN LESS`/`GREATER`/`IS NOT NUMERIC`, `INSPECT FUNCTION REVERSE` |
+| `CAD0005A` | `PERFORM VARYING` com tabela, `IF` sem `END-IF` dentro do laço, literal continuado na coluna 72, arquivo de linha lido e regravado (duas execuções) |
+| `feat001_refmod_varying` | Os mesmos recursos novos em um programa curto (`tests/feature_programs/`) |
 
 ---
 
 ## Limitações
 
 - `**` só com expoente inteiro.
-- `PERFORM VARYING`, `PERFORM` em linha, `INITIALIZE`, `CALL`, referência por posição (`X(1:2)`), `REDEFINES`, `COMP`/`COMP-3` e `SCREEN SECTION` não são suportados e geram erro claro.
+- `PERFORM n TIMES`, `CALL`, `REDEFINES`, `COMP`/`COMP-3` e `SCREEN SECTION` não são suportados e geram erro claro.
 - O arquivo indexado é simulado (até 256 registros) e tem formato próprio, não compatível com ISAM.
 - Depois de um `COPY` expandido, a numeração das linhas nos diagnósticos fica deslocada.
 - `COPY ... REPLACING` aceita `==pseudo-texto==` e palavras; `LEADING`/`TRAILING`, literais como operando e nome de copybook entre aspas não são suportados.

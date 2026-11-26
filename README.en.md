@@ -127,7 +127,7 @@ All `E`, formatted as `[E] linha L, col C: message`: invalid character, `_` outs
 
 ### Syntax
 
-Recognizes `IDENTIFICATION` (including `AUTHOR`, `REMARKS`…), `ENVIRONMENT` (`SPECIAL-NAMES`, `SELECT`), `DATA` (`FD`, levels `01`–`49` and `77`, `PIC`, `VALUE(S)`, `OCCURS`, `INDEXED BY`, `USAGE`) and `PROCEDURE` with sections and paragraphs. Statements: `DISPLAY`, `ACCEPT`, `MOVE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `DIVIDE`, `COMPUTE` (with `GIVING`, `REMAINDER`, `ON SIZE ERROR`), `IF/ELSE` (with or without `END-IF`), `EVALUATE`, `PERFORM` (plain, `UNTIL`, `THRU`), `GO TO`, `SET`, `SEARCH`, `INSPECT`, `OPEN`, `CLOSE`, `READ`, `WRITE`, `START`, `STOP RUN`, `GOBACK`, `EXIT`, `CONTINUE` and `FUNCTION UPPER-CASE`. Expressions with `**`, `* /`, `+ -`; conditions with `AND/OR/NOT`, symbolic or word relations (`EQUAL`, `GREATER`…), abbreviated conditions and `IS NUMERIC`.
+Recognizes `IDENTIFICATION` (including `AUTHOR`, `REMARKS`…), `ENVIRONMENT` (`SPECIAL-NAMES`, `SELECT`), `DATA` (`FD`, levels `01`–`49` and `77`, `PIC`, `VALUE(S)`, `OCCURS`, `INDEXED BY`, `USAGE`) and `PROCEDURE` with sections and paragraphs. Statements: `DISPLAY`, `ACCEPT`, `MOVE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `DIVIDE`, `COMPUTE` (with `GIVING`, `REMAINDER`, `ON SIZE ERROR`), `IF/ELSE` (with or without `END-IF`), `EVALUATE`, `PERFORM` (plain, `UNTIL`, `THRU`, `VARYING` and inline with `END-PERFORM`), `INITIALIZE` (with `REPLACING`), `GO TO`, `SET`, `SEARCH`, `INSPECT`, `OPEN`, `CLOSE`, `READ`, `WRITE`, `START`, `STOP RUN`, `GOBACK`, `EXIT`, `CONTINUE` and `FUNCTION UPPER-CASE`. Expressions with `**`, `* /`, `+ -`; conditions with `AND/OR/NOT`, symbolic or word relations (`EQUAL`, `GREATER`…), abbreviated conditions and `IS NUMERIC`.
 
 ### Semantics (§4)
 
@@ -168,7 +168,9 @@ It also checks undeclared identifiers, missing or extra subscripts, `SEARCH` wit
 | Case-insensitive | COBOL standard; literals are preserved. |
 | `D` lines ignored; `-debug` includes them | COBOL standard. |
 | **GnuCOBOL** reference outputs (`-std=ibm`) | Source of truth for signed `DISPLAY`, numeric `ACCEPT` and files. |
-| `CAD0002A`, `CAD0005A`, `PROG024A` rejected | `COPY` of missing copybooks and `CALL 'PROGDATA'`; merge markers in the source. |
+| `PROG024A` rejected | `COPY` of the missing `COD001A` copybook and `CALL 'PROGDATA'`. |
+| `CAD0005A` with the merge conflict resolved | The source had `<<<<<<< HEAD`/`=======`/`>>>>>>>` on lines 97–101; the `HEAD` side was kept (both sides were the same `DISPLAY`, differing by one space). The error is still covered by `tests/lexical_programs/lex002_conflito_merge.cob`. |
+| `COPY002A.cpy` inferred from usage | `CAD0002A`'s copybook is not in the repository; it was written from the names and sizes the program uses. |
 
 ---
 
@@ -183,14 +185,14 @@ Validation programs live in `tests/input_programs/`: the professor's 7 (from [eb
 | `scripts/run-error-tests.sh` | Checks the inserted lexical errors (`tests/error_programs/`), the semantic errors (`tests/semantic_programs/`) and the rejection of the 3 programs in `tests/rejected.txt`. |
 | `scripts/gen-reference.sh` | Regenerates `tests/expected/` with `cobc`. |
 
-Current result: **11/11** programs with output identical to GnuCOBOL; **7/7** programs with lexical errors detected; **11/11** expected rejections.
+Current result: **14/14** programs with output identical to GnuCOBOL; **7/7** programs with lexical errors detected; **12/12** expected rejections; **2/2** accepted programs (free text and `COPY REPLACING`).
 
 ---
 
 ## Limitations
 
 - `**` only with an integer exponent.
-- `PERFORM VARYING`, inline `PERFORM`, `INITIALIZE`, `CALL`, reference modification (`X(1:2)`), `REDEFINES`, `COMP`/`COMP-3` and `SCREEN SECTION` are not supported and give a clear error.
+- `PERFORM n TIMES`, `CALL`, `REDEFINES`, `COMP`/`COMP-3` and `SCREEN SECTION` are not supported and give a clear error.
 - The indexed file is simulated (up to 256 records) in its own format, not ISAM-compatible.
 - After an expanded `COPY`, line numbers in diagnostics are shifted.
 - `COPY ... REPLACING` accepts `==pseudo-text==` and words; `LEADING`/`TRAILING`, literal operands and quoted copybook names are not supported.

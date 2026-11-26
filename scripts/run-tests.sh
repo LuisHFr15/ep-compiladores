@@ -18,7 +18,7 @@ passed=0
 while read -r name _; do
 	[ -z "$name" ] && continue
 	total=$((total + 1))
-	file="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl 2>/dev/null | head -1)"
+	file="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl tests/feature_programs/"$name".cob 2>/dev/null | head -1)"
 	out="$outputs/$name.txt"
 	echo "=== $file -> $out ==="
 	if "$tmp/cobolc" -o "$out" -asm "$tmp/$name.asm" "$file" > /dev/null 2>&1; then

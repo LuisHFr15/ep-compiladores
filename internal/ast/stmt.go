@@ -74,10 +74,17 @@ type If struct {
 	Else []Stmt
 }
 
+type WhenAlt struct {
+	Op    string
+	Value Expr
+	Class string
+	Neg   bool
+}
+
 type When struct {
 	Pos
-	Values []Expr
-	Body   []Stmt
+	Alts []WhenAlt
+	Body []Stmt
 }
 
 type Evaluate struct {
@@ -88,11 +95,18 @@ type Evaluate struct {
 	HasOther bool
 }
 
+type Varying struct {
+	Var      *Ref
+	From, By Expr
+}
+
 type Perform struct {
 	Pos
-	Target *Name
-	Thru   *Name
-	Until  Cond
+	Target  *Name
+	Thru    *Name
+	Varying *Varying
+	Until   Cond
+	Body    []Stmt
 }
 
 type GoTo struct {
@@ -155,9 +169,21 @@ type InspectConvert struct {
 type Inspect struct {
 	Pos
 	Target    *Ref
+	Func      *FuncCall
 	Tallying  []InspectTally
 	Replacing []InspectReplace
 	Convert   *InspectConvert
+}
+
+type InitReplace struct {
+	Category string
+	Value    Expr
+}
+
+type Initialize struct {
+	Pos
+	Targets   []*Ref
+	Replacing []InitReplace
 }
 
 type OpenItem struct {
@@ -199,27 +225,28 @@ type Start struct {
 	Invalid *Branch
 }
 
-func (Display) stmtNode()  {}
-func (Accept) stmtNode()   {}
-func (Move) stmtNode()     {}
-func (Add) stmtNode()      {}
-func (Subtract) stmtNode() {}
-func (Multiply) stmtNode() {}
-func (Divide) stmtNode()   {}
-func (Compute) stmtNode()  {}
-func (If) stmtNode()       {}
-func (Evaluate) stmtNode() {}
-func (Perform) stmtNode()  {}
-func (GoTo) stmtNode()     {}
-func (StopRun) stmtNode()  {}
-func (Goback) stmtNode()   {}
-func (Exit) stmtNode()     {}
-func (Continue) stmtNode() {}
-func (Set) stmtNode()      {}
-func (Search) stmtNode()   {}
-func (Inspect) stmtNode()  {}
-func (Open) stmtNode()     {}
-func (Close) stmtNode()    {}
-func (Read) stmtNode()     {}
-func (Write) stmtNode()    {}
-func (Start) stmtNode()    {}
+func (Display) stmtNode()    {}
+func (Accept) stmtNode()     {}
+func (Move) stmtNode()       {}
+func (Add) stmtNode()        {}
+func (Subtract) stmtNode()   {}
+func (Multiply) stmtNode()   {}
+func (Divide) stmtNode()     {}
+func (Compute) stmtNode()    {}
+func (If) stmtNode()         {}
+func (Evaluate) stmtNode()   {}
+func (Perform) stmtNode()    {}
+func (GoTo) stmtNode()       {}
+func (StopRun) stmtNode()    {}
+func (Goback) stmtNode()     {}
+func (Exit) stmtNode()       {}
+func (Continue) stmtNode()   {}
+func (Set) stmtNode()        {}
+func (Search) stmtNode()     {}
+func (Inspect) stmtNode()    {}
+func (Initialize) stmtNode() {}
+func (Open) stmtNode()       {}
+func (Close) stmtNode()      {}
+func (Read) stmtNode()       {}
+func (Write) stmtNode()      {}
+func (Start) stmtNode()      {}

@@ -129,6 +129,9 @@ func (l *Lexer) scan(code []rune, i, lineNo int) {
 		case c == ';':
 			l.emit(token.SEMICOLON, ";", lineNo, col)
 			i++
+		case c == ':':
+			l.emit(token.COLON, ":", lineNo, col)
+			i++
 		case c == '(':
 			l.emit(token.LPAREN, "(", lineNo, col)
 			i++

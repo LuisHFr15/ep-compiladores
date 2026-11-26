@@ -18,7 +18,7 @@ while read -r name opts; do
 	[ -z "$name" ] && continue
 	[ -n "$only" ] && [ "$only" != "$name" ] && continue
 	total=$((total + 1))
-	src="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl 2>/dev/null | head -1)"
+	src="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl tests/feature_programs/"$name".cob 2>/dev/null | head -1)"
 	asm="tests/asm/$name.asm"
 
 	if ! "$tmp/cobolc" -asm "$asm" "$src" > "$tmp/$name.compile" 2>&1; then

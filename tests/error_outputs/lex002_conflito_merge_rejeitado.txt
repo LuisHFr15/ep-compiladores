@@ -1,0 +1,45 @@
+Arquivo: tests/lexical_programs/lex002_conflito_merge.cob
+
+=== Fluxo de tokens (22) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            LEX002
+7      2      26    PERIOD           .
+8      3      8     KEYWORD          PROCEDURE
+9      3      18    KEYWORD          DIVISION
+10     3      26    PERIOD           .
+11     4      8     IDENT            INICIO
+12     4      14    PERIOD           .
+13     6      12    KEYWORD          DISPLAY
+14     6      20    STRING           "VERSAO A"
+15     6      30    PERIOD           .
+16     8      12    KEYWORD          DISPLAY
+17     8      20    STRING           "VERSAO B"
+18     8      30    PERIOD           .
+19     10     12    KEYWORD          STOP
+20     10     17    KEYWORD          RUN
+21     10     20    PERIOD           .
+22     11     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (3) ===
+[E] linha 5, col 1: marcador de conflito de merge do git no fonte: resolva o conflito
+[E] linha 7, col 1: marcador de conflito de merge do git no fonte: resolva o conflito
+[E] linha 9, col 1: marcador de conflito de merge do git no fonte: resolva o conflito
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+não identificado
+
+Resultado: FALHA (3 erros léxicos)

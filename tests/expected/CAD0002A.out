@@ -1,0 +1,29 @@
+ 
+=============================================
+         CADASTRO DE USUÁRIO                 
+=============================================
+ 
+Digite 'FIM' no campo Nome para sair.
+Nome...........: 
+NOME INVALIDO
+Idade..........: 
+FAVOR INFORMAR IDADE CORRETA
+CADASTRO NAO PERMITIDO PARA MENORES DE 18
+Data nasc......: 
+DIA INVALIDO
+MES INVALIDO
+DIA INVALIDO
+Cargo..........: 
+E-mail.........: 
+EMAIL INVALIDO
+EMAIL INVALIDO
+Telefone.......: 
+Rua............: 
+Cidade.........: 
+Estado.........: 
+CEP............: 
+ 
+Deseja inserir mais registros?
+Digite o Nome ou digite 'FIM' para sair
+Nome...........: 
+DADOS CADASTRADOS COM SUCESSO!

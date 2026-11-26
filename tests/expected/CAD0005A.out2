@@ -1,0 +1,14 @@
+*========== AGENDA TELEFONICA =============*
+* 1 - CADASTRAR                            *
+* 2 - LISTAR                               *
+* 0 - SAIR                                 *
+*==========================================*
+FAVOR INFORMAR A OPÇÃO DESEJADA: *========== AGENDA TELEFONICA =============*
+*               LISTAR                     *
+*  NOME: ANA SOUZA                           -  TELEFONE: 11988887777    
+*  NOME: BRUNO LIMA                          -  TELEFONE: 2133334444     
+*  NOME: CARLOS DIAS                         -  TELEFONE: 11999990000    
+-------------------------------
+QTDE. REGISTROS: 03
+*==========================================*
+FIM DE PROGRAMA
