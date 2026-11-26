@@ -1,0 +1,50 @@
+Arquivo: tests/semantic_programs/sem003_destinos.cob
+
+=== Fluxo de tokens (28) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            SEM003
+7      2      26    PERIOD           .
+8      3      8     KEYWORD          PROCEDURE
+9      3      18    KEYWORD          DIVISION
+10     3      26    PERIOD           .
+11     4      8     IDENT            INICIO
+12     4      14    PERIOD           .
+13     5      12    KEYWORD          PERFORM
+14     5      20    IDENT            NAO-EXISTE
+15     5      30    PERIOD           .
+16     6      12    IDENT            GO
+17     6      15    IDENT            TO
+18     6      18    IDENT            FALTA
+19     6      23    PERIOD           .
+20     7      12    KEYWORD          STOP
+21     7      17    KEYWORD          RUN
+22     7      20    PERIOD           .
+23     8      8     IDENT            FIM
+24     8      11    PERIOD           .
+25     9      12    KEYWORD          STOP
+26     9      17    KEYWORD          RUN
+27     9      20    PERIOD           .
+28     10     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (2) ===
+[E] linha 5, col 20: parágrafo ou seção 'NAO-EXISTE' não declarado na PROCEDURE DIVISION
+[E] linha 6, col 18: parágrafo ou seção 'FALTA' não declarado na PROCEDURE DIVISION
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: SEM003
+
+Resultado: FALHA (2 erros semânticos)

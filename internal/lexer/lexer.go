@@ -23,11 +23,14 @@ type openLiteral struct {
 }
 
 type Lexer struct {
-	lines   []string
-	stream  *TokenStream
-	picture bool
-	debug   bool
-	open    *openLiteral
+	lines     []string
+	stream    *TokenStream
+	picture   bool
+	debug     bool
+	open      *openLiteral
+	lastLn    int
+	lastEnd   int
+	pastIdent bool
 }
 
 func New(input string, debug bool) *Lexer {
@@ -52,6 +55,10 @@ func (l *Lexer) Tokenize() *TokenStream {
 			}
 		case ' ', '-':
 		default:
+			if isMergeMarker(line) {
+				l.errorf(lineNo, 1, "marcador de conflito de merge do git no fonte: resolva o conflito")
+				continue
+			}
 			l.errorf(lineNo, 7, "indicador inválido na coluna 7: '%c'", indicator)
 		}
 
@@ -63,8 +70,11 @@ func (l *Lexer) Tokenize() *TokenStream {
 			} else {
 				l.closeUnterminated()
 			}
+		} else if indicator == '-' {
+			pos = l.continueWord(code)
 		}
 		l.scan(code, pos, lineNo)
+		l.markLineEnd(code, lineNo)
 	}
 
 	if l.open != nil {
@@ -126,7 +136,9 @@ func (l *Lexer) scan(code []rune, i, lineNo int) {
 			l.emit(token.RPAREN, ")", lineNo, col)
 			i++
 		default:
-			l.errorf(lineNo, col, "caractere inválido '%c'", c)
+			if !l.inFreeText() {
+				l.errorf(lineNo, col, "caractere inválido '%c'", c)
+			}
 			i++
 		}
 	}
@@ -228,6 +240,46 @@ func (l *Lexer) resumeLiteral(code []rune, lineNo int) int {
 	return i
 }
 
+func (l *Lexer) markLineEnd(code []rune, lineNo int) {
+	end := len(code)
+	for end > 0 && (code[end-1] == ' ' || code[end-1] == '\t') {
+		end--
+	}
+	l.lastLn = lineNo
+	l.lastEnd = end + codeStart
+}
+
+func (l *Lexer) continueWord(code []rune) int {
+	n := len(l.stream.Tokens)
+	if n == 0 {
+		return 0
+	}
+	prev := &l.stream.Tokens[n-1]
+	if prev.Line != l.lastLn || prev.Col+len([]rune(prev.Literal)) != l.lastEnd {
+		return 0
+	}
+	if prev.Type != token.IDENT && !token.IsKeyword(prev.Type) {
+		return 0
+	}
+	i := 0
+	for i < len(code) && (code[i] == ' ' || code[i] == '\t') {
+		i++
+	}
+	start := i
+	for i < len(code) && isWordChar(code[i], false) {
+		i++
+	}
+	if i == start || !isLetter(code[start]) && !isDigit(code[start]) {
+		return 0
+	}
+	prev.Literal += strings.ToUpper(string(code[start:i]))
+	prev.Type = token.LookupWord(prev.Literal)
+	if prev.Type == token.IDENT {
+		l.validateIdentifier(prev.Literal, prev.Line, prev.Col)
+	}
+	return i
+}
+
 func (l *Lexer) closeUnterminated() {
 	o := l.open
 	l.open = nil
@@ -270,6 +322,14 @@ func (l *Lexer) prevIsOperand() bool {
 }
 
 func (l *Lexer) emit(t token.Type, literal string, line, col int) {
+	if t == token.DIVISION {
+		if n := len(l.stream.Tokens); n > 0 {
+			switch l.stream.Tokens[n-1].Type {
+			case token.ENVIRONMENT, token.DATA, token.PROCEDURE:
+				l.pastIdent = true
+			}
+		}
+	}
 	l.stream.Tokens = append(l.stream.Tokens, token.Token{Type: t, Literal: literal, Line: line, Col: col})
 }
 
@@ -322,4 +382,29 @@ func isWordChar(c rune, allowUnderscore bool) bool {
 		return allowUnderscore
 	}
 	return isLetter(c) || isDigit(c) || c == '-'
+}
+
+func isMergeMarker(line []rune) bool {
+	text := string(line)
+	for _, m := range []string{"<<<<<<<", "=======", ">>>>>>>"} {
+		if strings.HasPrefix(text, m) {
+			return true
+		}
+	}
+	return false
+}
+
+func (l *Lexer) inFreeText() bool {
+	if l.pastIdent {
+		return false
+	}
+	t := l.stream.Tokens
+	k := len(t) - 1
+	for k >= 0 && t[k].Type != token.PERIOD {
+		k--
+	}
+	if k < 1 || t[k-1].Type != token.IDENT || !token.IsIdentParagraph(t[k-1].Literal) {
+		return false
+	}
+	return k == 1 || t[k-2].Type == token.PERIOD
 }

@@ -324,7 +324,16 @@ Arquivo: tests/input_programs/prog002_operacoes.cob
 320    100    37    PERIOD           .
 321    101    1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
 nenhum
 
 === Identificação (§3.1) ===

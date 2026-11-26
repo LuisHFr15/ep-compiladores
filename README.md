@@ -1,39 +1,38 @@
-# cobolc — compilador COBOL → C
+# cobolc — compilador COBOL → MIPS
 
 **Português** | [English](README.en.md)
 
-Trabalho (EP) da disciplina de **Introdução à Compiladores**. O objetivo é construir, em Go, um compilador para COBOL em formato fixo (*fixed format*) que gere um programa C equivalente, seguindo a especificação do curso (*Especificação Textual do Compilador COBOL*).
-
-O trabalho é entregue em fases. **A fase atual é a primeira entrega: a análise léxica.** Além do lexer, o programa já reconhece a IDENTIFICATION DIVISION (§3.1 da especificação) e extrai o nome do programa.
+Trabalho (EP) da disciplina de **Introdução à Compiladores**. O `cobolc` é um compilador, escrito em Go, de COBOL em formato fixo (*fixed format*) para **assembly MIPS**, que roda no simulador **MARS**. Ele segue a especificação do curso (*Especificação Textual do Compilador COBOL*) e faz todas as fases: análise léxica, sintática, semântica e geração do código final, sem representação intermediária.
 
 ---
 
 ## Sumário
 
-- [O que o programa faz hoje](#o-que-o-programa-faz-hoje)
+- [O que o programa faz](#o-que-o-programa-faz)
 - [Como usar](#como-usar)
-- [Exemplo de saída](#exemplo-de-saída)
 - [Arquitetura](#arquitetura)
 - [Análise léxica](#análise-léxica)
+- [Análise sintática e semântica](#análise-sintática-e-semântica)
+- [Geração de MIPS](#geração-de-mips)
 - [Decisões de projeto](#decisões-de-projeto)
 - [Testes](#testes)
+- [Limitações](#limitações)
 - [Estrutura de pastas](#estrutura-de-pastas)
-- [Próximos passos](#próximos-passos)
 - [Licença](#licença)
 
 ---
 
-## O que o programa faz hoje
+## O que o programa faz
 
 Dado um arquivo COBOL, o `cobolc`:
 
-1. **Lê o arquivo** respeitando o layout de colunas do COBOL.
-2. **Gera o fluxo de tokens**: converte o código em uma sequência ordenada de tokens (palavras reservadas, identificadores, literais, operadores, símbolos), cada um com linha e coluna.
-3. **Reporta erros léxicos** com linha, coluna e uma mensagem clara. A análise não para no primeiro erro: todos são listados de uma vez.
-4. **Identifica o programa**: valida `IDENTIFICATION DIVISION.` + `PROGRAM-ID. <nome>.` e extrai o nome.
-5. **Mostra tudo no terminal** e, opcionalmente, **grava o mesmo relatório em um `.txt`**.
+1. **Pré-processa** `COPY nome.` e `COPY nome REPLACING ==a== BY ==b==.`, expandindo o copybook (procurado na pasta do fonte e em `-I`).
+2. **Gera o fluxo de tokens**, respeitando o layout de colunas, e reporta os erros léxicos.
+3. **Analisa a sintaxe** das 4 divisões e dos comandos, reportando todos os erros de sintaxe encontrados.
+4. **Analisa a semântica**: tabela de símbolos e as 4 checagens do §4 da especificação.
+5. **Gera o `.asm` em MIPS**, que o MARS executa com a mesma saída do GnuCOBOL.
 
-Ainda **não** há geração de código C. Ela vem nas próximas fases (veja [Próximos passos](#próximos-passos)).
+Se qualquer fase tiver erro, o programa mostra a lista (linha, coluna e mensagem), **não gera o `.asm`** e sai com código 1.
 
 ---
 
@@ -42,104 +41,60 @@ Ainda **não** há geração de código C. Ela vem nas próximas fases (veja [Pr
 ### Requisitos
 
 - Go **1.26** ou superior.
+- Para executar o resultado: Java e o **MARS** (`Mars4_5.jar`).
+- Para os testes: `cobc` (GnuCOBOL 3.2) e o MARS em `tools/mars/Mars4_5.jar`.
 
-### Compilar
+### Compilar e executar
 
 ```bash
 go build -o cobolc ./cmd/cobolc
+./cobolc -asm saida.asm tests/input_programs/prog002_operacoes.cob
+java -jar Mars4_5.jar nc sm saida.asm
 ```
 
-### Executar
-
-```bash
-./cobolc [-debug] [-o saida.txt] <arquivo.cob>
-```
-
-Ou, sem compilar antes:
-
-```bash
-go run ./cmd/cobolc -o saida.txt tests/input_programs/prog001_divisoes.cob
-```
+Se `-asm` não for informado, o arquivo é gravado como `<nome do fonte>.asm` na pasta atual.
 
 | Flag | Descrição |
 |---|---|
-| `-o <arquivo.txt>` | Grava o relatório (fluxo de tokens + erros) neste arquivo. A pasta é criada se não existir. O arquivo é gravado mesmo se houver erros. |
+| `-asm <arquivo.asm>` | Destino do código MIPS. |
+| `-o <arquivo.txt>` | Grava o relatório completo (fluxo de tokens, erros de COPY, léxicos, sintáticos e semânticos). É gravado mesmo com erros. |
+| `-tokens` | Imprime o fluxo de tokens no terminal (por padrão só aparecem os erros e o resultado). |
+| `-I <pasta>` | Pasta extra para procurar copybooks (pode repetir). |
 | `-debug` | Inclui as linhas de depuração (coluna 7 = `D`). Sem a flag, elas são ignoradas como comentário. |
 
-**Código de saída:** `0` se não houver erros; `1` se houver erro léxico, erro na identificação do programa, ou falha ao ler/gravar arquivos.
+**Código de saída:** `0` se compilou; `1` se houve erro em qualquer fase ou falha ao ler/gravar arquivos.
 
-### Rodar todos os testes
+### Executar no MARS
+
+O código usa só as syscalls 8, 10, 11, 13, 14, 15 e 16. Para saída idêntica ao GnuCOBOL (bytes acentuados), rode com:
 
 ```bash
-./scripts/run-tests.sh
+java -Dfile.encoding=ISO-8859-1 -Dstdout.encoding=ISO-8859-1 -jar Mars4_5.jar nc me sm saida.asm < entrada.txt
 ```
 
-Compila o `cobolc` uma vez e roda em cada programa de `tests/input_programs/`, gravando o resultado de cada um em `tests/outputs/<nome>.txt`. Ao final mostra o resumo (`Resumo: 7/7 passaram`) e sai com código diferente de zero se algum falhar. Pode ser executado de qualquer pasta.
-
----
-
-## Exemplo de saída
-
-Trecho real de `tests/outputs/prog001_divisoes.txt`:
-
-```
-Arquivo: tests/input_programs/prog001_divisoes.cob
-
-=== Fluxo de tokens (77) ===
-#      LINHA  COL   TIPO             LEXEMA
-1      15     8     KEYWORD          IDENTIFICATION
-2      15     23    KEYWORD          DIVISION
-3      15     31    PERIOD           .
-4      16     8     KEYWORD          PROGRAM-ID
-5      16     18    PERIOD           .
-6      16     20    IDENT            PROG0001
-7      16     28    PERIOD           .
-...
-
-=== Erros léxicos (0) ===
-nenhum
-
-=== Identificação (§3.1) ===
-PROGRAM-ID: PROG0001
-
-Resultado: SUCESSO
-```
-
-Com erros, a seção de erros lista cada um com linha e coluna:
-
-```
-=== Erros léxicos (2) ===
-[E] linha 3, col 16: caractere inválido '@'
-[E] linha 4, col 20: literal alfanumérico não terminado: falta a aspa de fechamento (")
-
-=== Identificação (§3.1) ===
-PROGRAM-ID: EXEMPLO
-
-Resultado: FALHA (2 erros léxicos)
-```
+`me` manda as mensagens do MARS para o stderr; sem isso, ele acrescenta uma linha em branco ao fim da saída.
 
 ---
 
 ## Arquitetura
 
-O programa é um pipeline em camadas, seguindo o layout padrão de projetos Go (`cmd/` para o executável, `internal/` para os pacotes):
-
 ```
-arquivo .cob ──► source ──► lexer ──► parser ──► report ──► terminal / .txt
-                              │
-                              └─► TokenStream (tokens em ordem + erros)
+fonte .cob/.cbl ─► preprocess ─► lexer ─► parser ─► semantic ─► codegen/mips ─► .asm
+                   (COPY)         tokens    AST      símbolos      + runtime
 ```
 
 | Pacote | Papel |
 |---|---|
-| `cmd/cobolc` | Ponto de entrada: lê as flags, orquestra o pipeline, imprime e grava o relatório. |
+| `cmd/cobolc` | Ponto de entrada: flags, orquestração das fases, relatório. |
 | `internal/source` | Leitura do arquivo fonte. |
-| `internal/token` | Tipos de token, palavras reservadas e a struct `Token` (tipo, lexema, linha, coluna). |
-| `internal/lexer` | Análise léxica. Produz a `TokenStream`, que guarda o fluxo de tokens **em ordem** e os erros encontrados. |
-| `internal/diagnostic` | Representação dos erros, com os níveis de severidade da especificação (§6: `I`, `W`, `E`, `S`). |
-| `internal/ast` | Nós da árvore sintática (por enquanto, `Program` e `IdentificationDivision`). |
-| `internal/parser` | Análise sintática da IDENTIFICATION DIVISION (§3.1). |
-| `internal/report` | Monta o relatório em texto, o mesmo para terminal e `.txt`. |
+| `internal/preprocess` | Expansão de `COPY`. |
+| `internal/token`, `internal/lexer` | Tokens e análise léxica (`TokenStream`: tokens em ordem + erros). |
+| `internal/diagnostic` | Erros com as severidades do §6 (`I`, `W`, `E`, `S`). |
+| `internal/ast` | Nós da árvore sintática: dados, comandos, expressões, condições. |
+| `internal/parser` | Análise sintática por descida recursiva, com recuperação por sentença. |
+| `internal/semantic` | PIC, tabela de símbolos, layout de memória e checagens do §4. |
+| `internal/codegen/mips` | Gerador de MIPS e `runtime/*.s` (rotinas embutidas com `go:embed`). |
+| `internal/report` | Relatório em texto (terminal e `.txt`). |
 
 ---
 
@@ -150,88 +105,102 @@ arquivo .cob ──► source ──► lexer ──► parser ──► report 
 | Colunas | Área | Tratamento |
 |---|---|---|
 | 1–6 | Sequência | Ignorada. |
-| 7 | Indicador | `*` ou `/` = comentário · `-` = continuação de literal · `D` = linha de depuração · espaço = linha normal. Qualquer outro caractere é erro. |
-| 8–11 | Área A | Lida como código. |
-| 12–72 | Área B | Lida como código. |
+| 7 | Indicador | `*` ou `/` = comentário · `-` = continuação · `D` = depuração · espaço = linha normal. Outro caractere é erro. |
+| 8–72 | Áreas A e B | Lidas como código. |
 | 73–80 | Programa | Ignorada. |
+
+A continuação vale para **literais** e para **palavras** partidas no fim da coluna 72 (`T` + `-AB-TRABALHADOR` = `TAB-TRABALHADOR`).
 
 ### Categorias de token
 
-| Tipo | O que é | Exemplo |
-|---|---|---|
-| `KEYWORD` | Palavra reservada | `IDENTIFICATION`, `MOVE`, `PIC` |
-| `IDENT` | Identificador (nome definido pelo programador) | `WRK-TOTAL` |
-| `NUMBER` | Literal numérico, com sinal e decimal opcionais | `10`, `-123.45` |
-| `STRING` | Literal alfanumérico, entre `"` ou `'` | `"OLA, MUNDO!"` |
-| `PICTURE-STRING` | Máscara da cláusula PICTURE | `S9(05)V99` |
-| `OPERATOR` | Operador aritmético ou relacional | `=`, `>`, `**` |
-| `PERIOD`, `COMMA`, `SEMICOLON`, `LPAREN`, `RPAREN` | Símbolos `.` `,` `;` `(` `)` | `.` |
-| `EOF` | Fim do arquivo | |
-
-**Palavras reservadas:** as do §2.2 (`IDENTIFICATION`, `ENVIRONMENT`, `DATA`, `PROCEDURE`, `DIVISION`, `SECTION`, `DISPLAY`, `ACCEPT`, `PERFORM`, `STOP`, `RUN`, `IF`, `ELSE`, `MOVE`), mais `PROGRAM-ID` (§3.1) e `PIC`/`PICTURE` (§3.3).
+`KEYWORD`, `IDENT`, `NUMBER`, `STRING`, `PICTURE-STRING`, `OPERATOR`, `PERIOD`, `COMMA`, `SEMICOLON`, `LPAREN`, `RPAREN` e `EOF`. Os verbos e cláusulas que a especificação não lista (`ADD`, `INSPECT`, `SEARCH`…) saem como `IDENT` e são reconhecidos pelo parser.
 
 ### Erros léxicos
 
-Todos com severidade `E`, no formato `[E] linha L, col C: mensagem`:
+Todos `E`, no formato `[E] linha L, col C: mensagem`: caractere inválido, `_` fora do nome do programa, literal não terminado, continuação sem aspa, identificador com mais de 30 caracteres ou com hífen no início/fim, número com dois pontos decimais, indicador inválido na coluna 7 e **marcador de conflito de merge do git**. O texto livre dos parágrafos `AUTHOR`, `INSTALLATION`, `DATE-WRITTEN`, `DATE-COMPILED`, `SECURITY` e `REMARKS` (IDENTIFICATION) não gera erro de caractere inválido.
 
-| Situação | Mensagem |
+---
+
+## Análise sintática e semântica
+
+### Sintaxe
+
+Reconhece `IDENTIFICATION` (inclusive `AUTHOR`, `REMARKS`…), `ENVIRONMENT` (`SPECIAL-NAMES`, `SELECT`), `DATA` (`FD`, níveis `01`–`49` e `77`, `PIC`, `VALUE(S)`, `OCCURS`, `INDEXED BY`, `USAGE`) e `PROCEDURE` com seções e parágrafos. Comandos: `DISPLAY`, `ACCEPT`, `MOVE`, `ADD`, `SUBTRACT`, `MULTIPLY`, `DIVIDE`, `COMPUTE` (com `GIVING`, `REMAINDER`, `ON SIZE ERROR`), `IF/ELSE` (com ou sem `END-IF`), `EVALUATE`, `PERFORM` (simples e `UNTIL`, `THRU`), `GO TO`, `SET`, `SEARCH`, `INSPECT`, `OPEN`, `CLOSE`, `READ`, `WRITE`, `START`, `STOP RUN`, `GOBACK`, `EXIT`, `CONTINUE` e `FUNCTION UPPER-CASE`. Expressões com `**`, `* /`, `+ -`; condições com `AND/OR/NOT`, relacionais por símbolo ou palavra (`EQUAL`, `GREATER`…), condição abreviada e `IS NUMERIC`.
+
+### Semântica (§4)
+
+| Checagem | Mensagem de exemplo |
 |---|---|
-| Caractere fora do alfabeto da linguagem | `caractere inválido '@'` |
-| `_` fora do nome do programa | `caractere inválido '_'` |
-| Literal sem a aspa de fechamento | `literal alfanumérico não terminado: falta a aspa de fechamento (")` |
-| Linha de continuação de literal sem aspa | `continuação de literal deve iniciar com aspa (")` |
-| Identificador com mais de 30 caracteres | `identificador '...' excede 30 caracteres (tem N)` |
-| Identificador começando ou terminando com hífen | `identificador '-ABC' não pode iniciar com hífen` / `... não pode terminar com hífen` |
-| Número com mais de um ponto decimal | `literal numérico inválido '1.2.3': mais de um ponto decimal` |
-| Caractere inválido na coluna 7 | `indicador inválido na coluna 7: 'X'` |
+| `MOVE` de `PIC A` para `PIC 9` | `MOVE inválido: item alfabético (PIC A) não pode ser movido para o item numérico 'NUM'` |
+| Identificador duplicado, referência ambígua (resolvida com `OF`) | `identificador 'CONT' declarado mais de uma vez no mesmo escopo` · `referência ambígua a 'CAMPO'; qualifique com OF` |
+| Destino de `PERFORM`/`GO TO` inexistente | `parágrafo ou seção 'FALTA' não declarado na PROCEDURE DIVISION` |
+| Operação de arquivo sem `SELECT` e `FD` | `arquivo 'X' não declarado em FILE-CONTROL (SELECT)` · `arquivo 'Y' sem descritor FD na FILE SECTION` |
+
+Também são verificados: identificador não declarado, subscritos faltando ou sobrando, `SEARCH` sem `INDEXED BY` e `VALUE` incompatível com o `PIC`.
+
+---
+
+## Geração de MIPS
+
+- **Dados:** um bloco estático com a imagem inicial calculada em compilação (`VALUE`, zeros nos numéricos, espaços nos textos). Grupos, `OCCURS` e subscritos viram `base + (i-1)*tamanho`.
+- **Números:** guardados como dígitos ASCII, como no COBOL (`DISPLAY`), com sinal por *overpunch*. A aritmética usa vetores de 40 dígitos decimais: soma, subtração, multiplicação, divisão longa (truncada), potência com expoente inteiro. Sem ponto flutuante, sem limite de 32 bits.
+- **`PERFORM`:** pilha de retorno em software; cada fim de parágrafo ou seção testa o topo. Funciona com recursão e com seções.
+- **`ON SIZE ERROR`:** destino intacto no estouro; sem a cláusula, os dígitos altos são truncados.
+- **Máscaras editadas:** `PIC -ZZZZZZZZZ9.99`, `ZZZ.ZZZ.ZZZ,ZZ` (com `DECIMAL-POINT IS COMMA`), `Z`, `*`, `9`, `+`, `-`, `CR`, `DB`, `B`, `0`, `/`, `$` e separadores.
+- **Arquivos:** `SEQUENTIAL` (registros fixos), `LINE SEQUENTIAL` e `INDEXED` (tabela em memória com busca pela chave, gravada no `CLOSE`), com `FILE STATUS` 00, 10, 22, 23, 34, 35, 37, 41, 42, 47 e 48.
+- **`INSPECT`:** `TALLYING`, `REPLACING` e `CONVERTING`, com `BEFORE`/`AFTER INITIAL`.
 
 ---
 
 ## Decisões de projeto
 
-### Gerais
-
 | Decisão | Motivo |
 |---|---|
-| Implementação em **Go** | Performance. A especificação permite qualquer linguagem para o compilador. |
-| Backend em **C** | O professor restringiu a geração a C ou JVM; C foi escolhido. |
-| Layout em camadas (`cmd/` + `internal/`) | Cada fase do compilador fica em um pacote. As próximas fases (parser completo, semântica, geração de C) entram sem reescrever as anteriores. |
-| O lexer **não para no primeiro erro** | Registra o erro, pula o trecho inválido e continua, mostrando todos os problemas do arquivo de uma vez. |
-| Fluxo de tokens guardado na struct `TokenStream` | Os tokens ficam em ordem, junto com os erros, e o relatório é montado a partir dela. |
-| Colunas contadas por caractere (*rune*), não por byte | Acentos dentro de strings (comuns em português) não deslocam as colunas 8–72. |
-
-### Interpretações e divergências da especificação
-
-Os programas de exemplo do professor, usados na validação, usam recursos que vão além do texto da especificação. Cada caso foi decidido assim:
-
-| Decisão | Motivo |
-|---|---|
-| **`_` permitido só no nome do programa** (logo após `PROGRAM-ID.` e `END PROGRAM`) | O §2.2 não permite `_`, mas três exemplos do professor usam `_` no nome do programa (`PROG006_FILES`). Em qualquer outro lugar, `_` continua sendo erro. |
-| **Categoria `OPERATOR`** (`+ - * / ** = > < >= <=`) | O §2.2 só lista `. , ; ( )`, mas quatro exemplos usam operadores (`COMPUTE X = ...`, `UNTIL IDX > 3`). |
-| **Continuação (coluna 7 = `-`) só para literais** | É o que o §2.1 descreve. Uma linha `-` sem literal aberto na anterior é lida como linha normal, sem erro. |
-| **PICTURE como token único** | Após `PIC`/`PICTURE`, a máscara inteira (`S9(05)V99`, `-ZZZZZZZZZ9.99`) vira um token. Lida palavra por palavra, `-ZZZ...` geraria um falso erro de hífen inicial. |
-| **`PIC` e `PICTURE` como palavras reservadas** | Citadas no §3.3 e necessárias para reconhecer a máscara. |
-| **Não diferencia maiúsculas de minúsculas** | `move`, `Move` e `MOVE` são a mesma palavra. Palavras e máscaras são convertidas para maiúsculas; o conteúdo dos literais é preservado. |
-| **Linhas `D` ignoradas por padrão; `-debug` as inclui** | Segue o padrão COBOL: linha de depuração só é compilada em modo debug. |
-| **Aspas duplicadas dentro de literais** | Regra do COBOL: `"ELE DISSE ""OI"""` é um único literal, e `""` representa uma aspa. |
+| Implementação em **Go** | Performance. |
+| Backend **MIPS (MARS)** | Recomendação do professor, por simplicidade. Substitui o C previsto no §5. |
+| Lexer e parser escritos à mão | Boa parte das regras depende de coluna e de contexto. |
+| Palavras COBOL contextuais no parser | Mantém o léxico estável e evita reservar nomes como `NAME`. |
+| `_` só no nome do programa | O §2.2 não prevê `_`, mas três exemplos o usam em `PROGRAM-ID`. |
+| Categoria `OPERATOR` | O §2.2 só lista `. , ; ( )`, mas os exemplos usam `=`, `>`, `**`. |
+| Continuação de palavra | Sem ela, `TAB-TRABALHADOR` (`prog004`/`prog006`) não existiria. |
+| Não diferencia maiúsculas de minúsculas | Padrão COBOL; literais são preservados. |
+| Linhas `D` ignoradas; `-debug` as inclui | Padrão COBOL. |
+| Saídas de referência do **GnuCOBOL** (`-std=ibm`) | Fonte de verdade para `DISPLAY` de campos com sinal, `ACCEPT` numérico e arquivos. |
+| `CAD0002A`, `CAD0005A`, `PROG024A` rejeitados | `COPY` de copybooks inexistentes e `CALL 'PROGDATA'`; marcadores de merge no fonte. |
 
 ---
 
 ## Testes
 
-- **Entradas:** `tests/input_programs/`, com os 7 programas de exemplo fornecidos pelo professor (origem: [ebasso/cobol-exemplos](https://github.com/ebasso/cobol-exemplos)).
-- **Saídas:** `tests/outputs/`, com um `.txt` por programa, contendo o fluxo de tokens completo, os erros léxicos e a identificação do programa.
-- **Resultado atual:** **7/7** programas processados sem erros léxicos.
+Os programas de validação estão em `tests/input_programs/`: os 7 do professor (origem: [ebasso/cobol-exemplos](https://github.com/ebasso/cobol-exemplos)) e 7 `.cbl`. Entradas em `tests/stdin/`, fixtures em `tests/data/` e saídas esperadas (geradas pelo GnuCOBOL) em `tests/expected/`.
 
-| Programa | PROGRAM-ID | Tokens |
-|---|---|---|
-| `prog001_divisoes.cob` | `PROG0001` | 77 |
-| `prog002_operacoes.cob` | `YOUR-PROGRAM-NAME` | 321 |
-| `prog003_calculadora.cob` | `CALCULADORA` | 230 |
-| `prog004_folha_pgto.cob` | `FOLHA-PGTO` | 223 |
-| `prog005_strings.cob` | `PROG008_STRING` | 237 |
-| `prog006_files.cob` | `PROG006_FILES` | 227 |
-| `prog007_loja.cob` | `PROG007_LOJA` | 567 |
+| Script | O que faz |
+|---|---|
+| `scripts/run-mips-tests.sh [programa]` | Compila cada programa de `tests/programs.txt`, roda no MARS e compara a saída (e os arquivos gerados) com `tests/expected/`. Os `.asm` ficam em `tests/asm/`. |
+| `scripts/run-tests.sh` | Roda o compilador em cada programa e grava o relatório em `tests/outputs/`. |
+| `scripts/run-error-tests.sh` | Confere os erros léxicos inseridos (`tests/error_programs/`), os erros semânticos (`tests/semantic_programs/`) e a rejeição dos 3 programas de `tests/rejected.txt`. |
+| `scripts/gen-reference.sh` | Regenera `tests/expected/` com o `cobc`. |
+
+Resultado atual: **11/11** programas com saída idêntica à do GnuCOBOL; **7/7** programas com erros léxicos detectados; **11/11** rejeições esperadas.
+
+| Programa | Recursos |
+|---|---|
+| `prog001`–`prog003` | Divisões, aritmética, `ACCEPT`, `IF` aninhado, máscara editada, `**` |
+| `prog004`, `prog005` | `OCCURS`, `SEARCH`, `SET`, `INSPECT` |
+| `prog006`, `CAD0004A`, `BUSCA01A` | Arquivos sequenciais e de linha |
+| `prog007` | Arquivo indexado, `START`, `INVALID KEY`, `EVALUATE`, `FILE STATUS` |
+| `CAIXAREG`, `CALCMD01` | Decimais, `COMPUTE`, `PERFORM` recursivo |
+
+---
+
+## Limitações
+
+- `**` só com expoente inteiro.
+- `PERFORM VARYING`, `PERFORM` em linha, `INITIALIZE`, `CALL`, referência por posição (`X(1:2)`), `REDEFINES`, `COMP`/`COMP-3` e `SCREEN SECTION` não são suportados e geram erro claro.
+- O arquivo indexado é simulado (até 256 registros) e tem formato próprio, não compatível com ISAM.
+- Depois de um `COPY` expandido, a numeração das linhas nos diagnósticos fica deslocada.
+- `COPY ... REPLACING` aceita `==pseudo-texto==` e palavras; `LEADING`/`TRAILING`, literais como operando e nome de copybook entre aspas não são suportados.
+- O MARS bloqueia um nome de arquivo depois de um `OPEN` de leitura que falha; o runtime contorna prefixando `./` ao caminho.
 
 ---
 
@@ -239,32 +208,17 @@ Os programas de exemplo do professor, usados na validação, usam recursos que v
 
 ```
 .
-├── cmd/cobolc/            # executável
+├── cmd/cobolc/              # executável
 ├── internal/
-│   ├── ast/               # árvore sintática
-│   ├── diagnostic/        # erros e severidades
-│   ├── lexer/             # análise léxica + TokenStream
-│   ├── parser/            # análise sintática (§3.1)
-│   ├── report/            # relatório em texto
-│   ├── source/            # leitura do arquivo
-│   └── token/             # tipos de token e palavras reservadas
-├── examples/hello.cbl     # exemplo mínimo
-├── scripts/run-tests.sh   # roda o cobolc em todos os testes
+│   ├── ast/  codegen/mips/  diagnostic/  lexer/  parser/
+│   ├── preprocess/  report/  semantic/  source/  token/
+│   └── codegen/mips/runtime/   # rotinas MIPS (core, str, num, edit, inspect, file)
+├── scripts/                 # run-mips-tests, run-tests, run-error-tests, gen-reference
+├── examples/hello.cbl
 └── tests/
-    ├── input_programs/    # programas COBOL de validação
-    └── outputs/           # relatórios gerados
+    ├── input_programs/  stdin/  data/  expected/  asm/  outputs/
+    └── error_programs/  error_outputs/  semantic_programs/  rejected.txt  programs.txt
 ```
-
----
-
-## Próximos passos
-
-Conforme a especificação, as próximas fases são:
-
-- **Análise sintática completa (§3):** ENVIRONMENT, DATA e PROCEDURE DIVISION.
-- **Análise semântica (§4):** compatibilidade de `MOVE`, unicidade de identificadores, destinos de `PERFORM`/`GO TO` e associação de arquivos.
-- **Geração de código C (§5).**
-- **Tratamento de erros completo (§6):** todos os níveis `I`/`W`/`E`/`S` e a diretiva `COPY` (copybooks).
 
 ---
 

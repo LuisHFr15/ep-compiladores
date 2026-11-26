@@ -1,0 +1,342 @@
+Arquivo: tests/error_programs/prog002_operacoes_erros.cob
+
+=== Fluxo de tokens (320) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      11     8     KEYWORD          IDENTIFICATION
+2      11     23    KEYWORD          DIVISION
+3      11     31    PERIOD           .
+4      12     8     KEYWORD          PROGRAM-ID
+5      12     18    PERIOD           .
+6      12     20    IDENT            YOUR-PROGRAM-NAME
+7      12     37    PERIOD           .
+8      13     8     KEYWORD          DATA
+9      13     13    KEYWORD          DIVISION
+10     13     21    PERIOD           .
+11     14     8     IDENT            FILE
+12     14     13    KEYWORD          SECTION
+13     14     20    PERIOD           .
+14     15     8     IDENT            WORKING-STORAGE
+15     15     24    KEYWORD          SECTION
+16     15     31    PERIOD           .
+17     16     12    NUMBER           77
+18     16     15    IDENT            WRK-VALOR1
+19     16     32    KEYWORD          PIC
+20     16     36    PICTURE-STRING   9(10)
+21     16     42    IDENT            VALUES
+22     16     49    NUMBER           10.5.3
+23     16     55    PERIOD           .
+24     17     12    NUMBER           77
+25     17     15    IDENT            WRK-VALOR2
+26     17     32    KEYWORD          PIC
+27     17     36    PICTURE-STRING   9(10)
+28     17     42    IDENT            VALUES
+29     17     49    IDENT            ZEROS
+30     17     54    PERIOD           .
+31     18     12    NUMBER           77
+32     18     15    IDENT            WRK-A
+33     18     32    KEYWORD          PIC
+34     18     36    PICTURE-STRING   9(2)
+35     18     41    IDENT            VALUES
+36     18     48    NUMBER           1
+37     18     49    PERIOD           .
+38     19     12    NUMBER           77
+39     19     15    IDENT            WRK-B
+40     19     32    KEYWORD          PIC
+41     19     36    PICTURE-STRING   9(2)
+42     19     41    IDENT            VALUES
+43     19     48    NUMBER           1
+44     19     49    PERIOD           .
+45     20     12    NUMBER           77
+46     20     15    IDENT            WRK-C
+47     20     32    KEYWORD          PIC
+48     20     36    PICTURE-STRING   9(2)
+49     20     41    IDENT            VALUES
+50     20     48    IDENT            ZEROS
+51     20     53    PERIOD           .
+52     22     12    NUMBER           01
+53     22     15    IDENT            WRK-TOTAIS
+54     22     25    PERIOD           .
+55     23     15    NUMBER           05
+56     23     18    IDENT            WRK-TOTAL
+57     23     32    KEYWORD          PIC
+58     23     36    PICTURE-STRING   9(10)
+59     23     42    IDENT            VALUE
+60     23     48    NUMBER           19
+61     23     50    PERIOD           .
+62     25     8     KEYWORD          PROCEDURE
+63     25     18    KEYWORD          DIVISION
+64     25     26    PERIOD           .
+65     26     8     IDENT            MAIN-PROCEDURE
+66     26     22    PERIOD           .
+67     27     12    KEYWORD          DISPLAY
+68     27     20    STRING           "===== start =======.
+69     28     12    KEYWORD          MOVE
+70     28     17    NUMBER           20
+71     28     20    IDENT            TO
+72     28     23    IDENT            WRK-VALOR2
+73     28     33    PERIOD           .
+74     29     12    KEYWORD          DISPLAY
+75     29     20    STRING           "MOVE 20 TO WRK-VALOR2 -->"
+76     29     48    IDENT            WRK-VALOR2
+77     29     58    PERIOD           .
+78     31     12    KEYWORD          MOVE
+79     31     17    IDENT            WRK-VALOR1
+80     31     28    IDENT            TO
+81     31     31    IDENT            WRK-VALOR2
+82     31     41    PERIOD           .
+83     32     12    KEYWORD          DISPLAY
+84     32     20    STRING           "MOVE WRK-VALOR1 TO WRK-VALOR2 -->"
+85     32     56    IDENT            WRK-VALOR2
+86     32     66    PERIOD           .
+87     34     12    KEYWORD          MOVE
+88     34     17    NUMBER           70
+89     34     20    IDENT            TO
+90     34     23    IDENT            WRK-VALOR1
+91     34     34    IDENT            WRK-VALOR2
+92     34     44    PERIOD           .
+93     35     12    KEYWORD          DISPLAY
+94     35     20    STRING           "MOVE 70 TO WRK-VALOR1 WRK-VALOR2 -->"
+95     35     59    IDENT            WRK-VALOR2
+96     35     69    PERIOD           .
+97     37     12    KEYWORD          MOVE
+98     37     17    IDENT            WRK-TOTAL
+99     37     27    IDENT            OF
+100    37     30    IDENT            WRK-TOTAIS
+101    37     41    IDENT            TO
+102    37     44    IDENT            WRK-VALOR2
+103    37     54    PERIOD           .
+104    38     12    KEYWORD          DISPLAY
+105    38     20    STRING           "MOVE WRK-TOTAL OF WRK-TOTAIS TO WRK-VALOR2. -->"
+106    39     22    IDENT            WRK-VALOR2
+107    39     32    PERIOD           .
+108    41     12    KEYWORD          DISPLAY
+109    41     20    STRING           "--------"
+110    41     30    PERIOD           .
+111    42     12    KEYWORD          DISPLAY
+112    42     20    STRING           "A = 1, B = 1, C = 1"
+113    42     41    PERIOD           .
+114    44     12    KEYWORD          DISPLAY
+115    44     20    STRING           " "
+116    44     23    PERIOD           .
+117    45     12    IDENT            ADD
+118    45     16    NUMBER           1
+119    45     18    NUMBER           1
+120    45     20    IDENT            TO
+121    45     23    IDENT            WRK-A
+122    45     28    PERIOD           .
+123    46     12    KEYWORD          DISPLAY
+124    46     20    STRING           "ADD B C TO A (A = B + C + A) -->"
+125    46     55    IDENT            WRK-A
+126    46     60    PERIOD           .
+127    48     12    KEYWORD          MOVE
+128    48     17    NUMBER           1
+129    48     19    IDENT            TO
+130    48     22    IDENT            WRK-A
+131    48     27    PERIOD           .
+132    49     12    IDENT            ADD
+133    49     16    NUMBER           1
+134    49     18    IDENT            TO
+135    49     21    IDENT            WRK-A
+136    49     27    IDENT            WRK-B
+137    49     32    PERIOD           .
+138    50     12    KEYWORD          DISPLAY
+139    50     20    STRING           " "
+140    50     23    PERIOD           .
+141    51     12    KEYWORD          DISPLAY
+142    51     20    STRING           "ADD 1 TO A B (A = A + 1; B = B + 1) -->"
+143    52     12    KEYWORD          DISPLAY
+144    52     20    STRING           "A= "
+145    52     26    IDENT            WRK-A
+146    52     32    STRING           " , B= "
+147    52     41    IDENT            WRK-B
+148    52     46    PERIOD           .
+149    54     12    KEYWORD          DISPLAY
+150    54     20    STRING           " "
+151    54     23    PERIOD           .
+152    55     12    IDENT            ADD
+153    55     16    NUMBER           1
+154    55     18    NUMBER           1
+155    55     20    IDENT            GIVING
+156    55     27    IDENT            WRK-A
+157    55     32    PERIOD           .
+158    56     12    KEYWORD          DISPLAY
+159    56     20    STRING           "ADD B C GIVING A (A = B + C) -->"
+160    56     55    IDENT            WRK-A
+161    56     60    PERIOD           .
+162    58     12    KEYWORD          DISPLAY
+163    58     20    STRING           "============ SUBTRACT ============= "
+164    58     58    PERIOD           .
+165    59     12    KEYWORD          MOVE
+166    59     17    NUMBER           99
+167    59     20    IDENT            TO
+168    59     23    IDENT            WRK-A
+169    59     28    PERIOD           .
+170    60     12    KEYWORD          MOVE
+171    60     17    NUMBER           0
+172    60     19    IDENT            TO
+173    60     22    IDENT            WRK-B
+174    60     27    PERIOD           .
+175    61     12    KEYWORD          DISPLAY
+176    61     20    STRING           "A= 99, B= 0"
+177    61     33    PERIOD           .
+178    62     12    IDENT            SUBTRACT
+179    62     21    NUMBER           30
+180    62     24    NUMBER           23
+181    62     27    IDENT            FROM
+182    62     32    IDENT            WRK-A
+183    63     27    IDENT            GIVING
+184    63     34    IDENT            WRK-B
+185    63     39    PERIOD           .
+186    64     12    KEYWORD          DISPLAY
+187    64     20    STRING           "SUBTRACT 30 23 FROM A GIVING B.-->"
+188    65     12    KEYWORD          DISPLAY
+189    65     20    STRING           "A= "
+190    65     26    IDENT            WRK-A
+191    65     32    STRING           " , B= "
+192    65     41    IDENT            WRK-B
+193    65     46    PERIOD           .
+194    67     12    KEYWORD          DISPLAY
+195    67     20    STRING           "============ MULTIPLY ============= "
+196    67     58    PERIOD           .
+197    68     12    KEYWORD          MOVE
+198    68     17    NUMBER           40
+199    68     20    IDENT            TO
+200    68     23    IDENT            WRK-A
+201    68     28    PERIOD           .
+202    69     12    KEYWORD          MOVE
+203    69     17    NUMBER           0
+204    69     19    IDENT            TO
+205    69     22    IDENT            WRK-B
+206    69     27    PERIOD           .
+207    70     12    KEYWORD          DISPLAY
+208    70     20    STRING           "A= 40, B= 0"
+209    70     33    PERIOD           .
+210    71     12    IDENT            MULTIPLY
+211    71     21    NUMBER           2
+212    71     23    IDENT            BY
+213    71     26    IDENT            WRK-A
+214    71     31    PERIOD           .
+215    72     12    KEYWORD          DISPLAY
+216    72     20    STRING           "MULTIPLY A BY 2 -->"
+217    73     12    KEYWORD          DISPLAY
+218    73     20    STRING           "A= "
+219    73     26    IDENT            WRK-A
+220    73     32    STRING           " , B= "
+221    73     41    IDENT            WRK-B
+222    73     46    PERIOD           .
+223    75     12    KEYWORD          DISPLAY
+224    75     20    STRING           "============ MULTIPLY ============= "
+225    75     58    PERIOD           .
+226    76     12    KEYWORD          MOVE
+227    76     17    NUMBER           40
+228    76     20    IDENT            TO
+229    76     23    IDENT            WRK-A
+230    76     28    PERIOD           .
+231    77     12    KEYWORD          MOVE
+232    77     17    NUMBER           0
+233    77     19    IDENT            TO
+234    77     22    IDENT            WRK-B
+235    77     27    PERIOD           .
+236    78     12    KEYWORD          DISPLAY
+237    78     20    STRING           "A= 40, B= 0"
+238    78     33    PERIOD           .
+239    79     12    IDENT            MULTIPLY
+240    79     21    NUMBER           2
+241    79     23    IDENT            BY
+242    79     26    IDENT            WRK-A
+243    79     32    IDENT            GIVING
+244    79     39    IDENT            WRK-B
+245    79     44    PERIOD           .
+246    80     12    KEYWORD          DISPLAY
+247    80     20    STRING           "MULTIPLY A BY 2 GIVING B.-->"
+248    81     12    KEYWORD          DISPLAY
+249    81     20    STRING           "A= "
+250    81     26    IDENT            WRK-A
+251    81     32    STRING           " , B= "
+252    81     41    IDENT            WRK-B
+253    81     46    PERIOD           .
+254    83     12    KEYWORD          DISPLAY
+255    83     20    STRING           "============ DIVIDE ============="
+256    83     55    PERIOD           .
+257    84     12    KEYWORD          MOVE
+258    84     17    NUMBER           81
+259    84     20    IDENT            TO
+260    84     23    IDENT            WRK-A
+261    84     28    PERIOD           .
+262    85     12    KEYWORD          MOVE
+263    85     17    NUMBER           0
+264    85     19    IDENT            TO
+265    85     22    IDENT            WRK-B
+266    85     27    PERIOD           .
+267    86     12    KEYWORD          MOVE
+268    86     17    NUMBER           0
+269    86     19    IDENT            TO
+270    86     22    IDENT            WRK-C
+271    86     27    PERIOD           .
+272    87     12    KEYWORD          DISPLAY
+273    87     20    STRING           "A= 80, B= 0"
+274    87     33    PERIOD           .
+275    88     12    IDENT            DIVIDE
+276    88     19    IDENT            WRK-A
+277    88     25    IDENT            BY
+278    88     28    NUMBER           2
+279    88     30    IDENT            GIVING
+280    88     37    IDENT            WRK-B
+281    88     43    IDENT            REMAINDER
+282    88     53    IDENT            WRK-C
+283    88     58    PERIOD           .
+284    89     12    KEYWORD          DISPLAY
+285    89     20    STRING           "DIVIDE A BY 2 GIVING B REMAINDER C .-->"
+286    90     12    KEYWORD          DISPLAY
+287    90     20    STRING           "A= "
+288    90     26    IDENT            WRK-A
+289    90     32    STRING           " , B= "
+290    90     41    IDENT            WRK-B
+291    90     47    STRING           " , C= "
+292    90     56    IDENT            WRK-C
+293    90     61    PERIOD           .
+294    93     12    KEYWORD          DISPLAY
+295    93     20    STRING           " "
+296    93     23    PERIOD           .
+297    94     12    KEYWORD          MOVE
+298    94     17    NUMBER           99
+299    94     20    IDENT            TO
+300    94     23    IDENT            WRK-A
+301    94     28    PERIOD           .
+302    95     12    IDENT            ADD
+303    95     16    NUMBER           1
+304    95     18    IDENT            TO
+305    95     21    IDENT            WRK-A
+306    96     12    IDENT            ON
+307    96     15    IDENT            SIZE
+308    96     20    IDENT            ERROR
+309    97     15    KEYWORD          DISPLAY
+310    97     23    STRING           "ON SIZE ERROR -->"
+311    97     43    IDENT            WRK-A
+312    97     48    PERIOD           .
+313    99     13    KEYWORD          STOP
+314    99     18    KEYWORD          RUN
+315    99     21    PERIOD           .
+316    100    8     IDENT            END
+317    100    12    IDENT            PROGRAM
+318    100    20    IDENT            YOUR-PROGRAM-NAME
+319    100    37    PERIOD           .
+320    101    1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (2) ===
+[E] linha 16, col 49: literal numérico inválido '10.5.3': mais de um ponto decimal
+[E] linha 27, col 20: literal alfanumérico não terminado: falta a aspa de fechamento (")
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+não identificado
+
+Resultado: FALHA (2 erros léxicos)

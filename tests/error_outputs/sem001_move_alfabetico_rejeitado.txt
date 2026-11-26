@@ -1,0 +1,62 @@
+Arquivo: tests/semantic_programs/sem001_move_alfabetico.cob
+
+=== Fluxo de tokens (41) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            SEM001
+7      2      26    PERIOD           .
+8      3      8     KEYWORD          DATA
+9      3      13    KEYWORD          DIVISION
+10     3      21    PERIOD           .
+11     4      8     IDENT            WORKING-STORAGE
+12     4      24    KEYWORD          SECTION
+13     4      31    PERIOD           .
+14     5      8     NUMBER           77
+15     5      11    IDENT            NOME
+16     5      27    KEYWORD          PIC
+17     5      31    PICTURE-STRING   A(10)
+18     5      37    IDENT            VALUE
+19     5      43    STRING           "ABC"
+20     5      48    PERIOD           .
+21     6      8     NUMBER           77
+22     6      11    IDENT            NUM
+23     6      27    KEYWORD          PIC
+24     6      31    PICTURE-STRING   9(5)
+25     6      37    IDENT            VALUE
+26     6      43    NUMBER           0
+27     6      44    PERIOD           .
+28     7      8     KEYWORD          PROCEDURE
+29     7      18    KEYWORD          DIVISION
+30     7      26    PERIOD           .
+31     8      8     IDENT            INICIO
+32     8      14    PERIOD           .
+33     9      12    KEYWORD          MOVE
+34     9      17    IDENT            NOME
+35     9      22    IDENT            TO
+36     9      25    IDENT            NUM
+37     9      28    PERIOD           .
+38     10     12    KEYWORD          STOP
+39     10     17    KEYWORD          RUN
+40     10     20    PERIOD           .
+41     11     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (1) ===
+[E] linha 9, col 25: MOVE inválido: item alfabético (PIC A) não pode ser movido para o item numérico 'NUM'
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: SEM001
+
+Resultado: FALHA (1 erros semânticos)

@@ -1,0 +1,155 @@
+Arquivo: tests/input_programs/CAD0004A.cbl
+
+=== Fluxo de tokens (134) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      7      8     KEYWORD          IDENTIFICATION
+2      7      23    KEYWORD          DIVISION
+3      7      31    PERIOD           .
+4      8      8     KEYWORD          PROGRAM-ID
+5      8      18    PERIOD           .
+6      8      20    IDENT            CAD0004A
+7      8      28    PERIOD           .
+8      10     8     KEYWORD          ENVIRONMENT
+9      10     20    KEYWORD          DIVISION
+10     10     28    PERIOD           .
+11     11     8     IDENT            INPUT-OUTPUT
+12     11     21    KEYWORD          SECTION
+13     11     28    PERIOD           .
+14     12     8     IDENT            FILE-CONTROL
+15     12     20    PERIOD           .
+16     13     12    IDENT            SELECT
+17     13     19    IDENT            ARQUIVO-CADASTRO
+18     13     36    IDENT            ASSIGN
+19     13     43    IDENT            TO
+20     13     46    STRING           "CADASTRO.dat"
+21     14     12    IDENT            ORGANIZATION
+22     14     25    IDENT            IS
+23     14     28    IDENT            LINE
+24     14     33    IDENT            SEQUENTIAL
+25     14     43    PERIOD           .
+26     16     8     KEYWORD          DATA
+27     16     13    KEYWORD          DIVISION
+28     16     21    PERIOD           .
+29     17     8     IDENT            FILE
+30     17     13    KEYWORD          SECTION
+31     17     20    PERIOD           .
+32     18     8     IDENT            FD
+33     18     11    IDENT            ARQUIVO-CADASTRO
+34     18     27    PERIOD           .
+35     19     8     NUMBER           01
+36     19     12    IDENT            REGISTRO-CADASTRO
+37     19     29    PERIOD           .
+38     20     10    NUMBER           05
+39     20     13    IDENT            NOME
+40     20     22    KEYWORD          PIC
+41     20     26    PICTURE-STRING   X(30)
+42     20     31    PERIOD           .
+43     21     10    NUMBER           05
+44     21     13    IDENT            IDADE
+45     21     22    KEYWORD          PIC
+46     21     26    PICTURE-STRING   9(03)
+47     21     31    PERIOD           .
+48     22     10    NUMBER           05
+49     22     13    IDENT            CPF
+50     22     22    KEYWORD          PIC
+51     22     26    PICTURE-STRING   X(14)
+52     22     31    PERIOD           .
+53     24     8     IDENT            WORKING-STORAGE
+54     24     25    KEYWORD          SECTION
+55     24     32    PERIOD           .
+56     25     8     NUMBER           01
+57     25     12    IDENT            WRK-CONTINUAR
+58     25     26    KEYWORD          PIC
+59     25     30    PICTURE-STRING   X(1)
+60     25     35    IDENT            VALUE
+61     25     41    STRING           'S'
+62     25     44    PERIOD           .
+63     26     8     NUMBER           01
+64     26     12    IDENT            WRK-NOME
+65     26     23    KEYWORD          PIC
+66     26     27    PICTURE-STRING   X(30)
+67     26     32    PERIOD           .
+68     27     8     NUMBER           01
+69     27     12    IDENT            WRK-IDADE
+70     27     23    KEYWORD          PIC
+71     27     27    PICTURE-STRING   9(03)
+72     27     32    PERIOD           .
+73     28     8     NUMBER           01
+74     28     12    IDENT            WRK-CPF
+75     28     23    KEYWORD          PIC
+76     28     27    PICTURE-STRING   X(14)
+77     28     32    PERIOD           .
+78     30     8     KEYWORD          PROCEDURE
+79     30     18    KEYWORD          DIVISION
+80     30     26    PERIOD           .
+81     32     8     IDENT            0001-PROCESSAR
+82     32     22    PERIOD           .
+83     33     13    IDENT            OPEN
+84     33     18    IDENT            OUTPUT
+85     33     25    IDENT            ARQUIVO-CADASTRO
+86     35     13    KEYWORD          PERFORM
+87     35     21    IDENT            0002-CADASTRAR-REG
+88     35     40    IDENT            UNTIL
+89     35     46    IDENT            WRK-CONTINUAR
+90     35     60    IDENT            EQUAL
+91     35     66    STRING           'N'
+92     37     13    IDENT            CLOSE
+93     37     19    IDENT            ARQUIVO-CADASTRO
+94     39     13    KEYWORD          STOP
+95     39     18    KEYWORD          RUN
+96     39     21    PERIOD           .
+97     41     8     IDENT            0001-END
+98     41     16    PERIOD           .
+99     43     8     IDENT            0002-CADASTRAR-REG
+100    43     26    PERIOD           .
+101    45     12    KEYWORD          DISPLAY
+102    45     20    STRING           'DIGITE O NOME: '
+103    46     12    KEYWORD          ACCEPT
+104    46     19    IDENT            WRK-NOME
+105    48     12    KEYWORD          DISPLAY
+106    48     20    STRING           'DIGITE A IDADE: '
+107    49     12    KEYWORD          ACCEPT
+108    49     19    IDENT            WRK-IDADE
+109    51     12    KEYWORD          DISPLAY
+110    51     20    STRING           'DIGITE O CPF (FORMATO 000.000.000-00): '
+111    52     12    KEYWORD          ACCEPT
+112    52     19    IDENT            WRK-CPF
+113    54     12    KEYWORD          MOVE
+114    54     17    IDENT            WRK-NOME
+115    54     27    IDENT            TO
+116    54     30    IDENT            NOME
+117    55     12    KEYWORD          MOVE
+118    55     17    IDENT            WRK-IDADE
+119    55     27    IDENT            TO
+120    55     30    IDENT            IDADE
+121    56     12    KEYWORD          MOVE
+122    56     17    IDENT            WRK-CPF
+123    56     27    IDENT            TO
+124    56     30    IDENT            CPF
+125    58     12    IDENT            WRITE
+126    58     18    IDENT            REGISTRO-CADASTRO
+127    60     12    KEYWORD          DISPLAY
+128    60     20    STRING           'DESEJA CADASTRAR OUTRA PESSOA? (S/N)'
+129    62     12    KEYWORD          ACCEPT
+130    62     19    IDENT            WRK-CONTINUAR
+131    62     32    PERIOD           .
+132    65     8     IDENT            0002-END
+133    65     16    PERIOD           .
+134    67     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: CAD0004A
+
+Resultado: SUCESSO

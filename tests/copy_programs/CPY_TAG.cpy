@@ -1,0 +1,2 @@
+       01 :TAG:-CAMPO PIC X(10) VALUE "OLA:MUNDO".
+       01 :TAG:-NUM   PIC 9(3) VALUE 42.

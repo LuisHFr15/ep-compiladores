@@ -1,0 +1,11 @@
+prog001_divisoes
+prog002_operacoes
+prog003_calculadora
+prog004_folha_pgto
+prog005_strings
+prog006_files
+prog007_loja nofiles
+BUSCA01A
+CAD0004A
+CAIXAREG
+CALCMD01

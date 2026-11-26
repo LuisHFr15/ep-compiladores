@@ -78,3 +78,12 @@ func IsKeyword(t Type) bool {
 	}
 	return false
 }
+
+var identParagraphs = map[string]bool{
+	"AUTHOR": true, "INSTALLATION": true, "DATE-WRITTEN": true,
+	"DATE-COMPILED": true, "SECURITY": true, "REMARKS": true,
+}
+
+func IsIdentParagraph(word string) bool {
+	return identParagraphs[word]
+}
