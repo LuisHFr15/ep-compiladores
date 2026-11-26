@@ -1,0 +1,20 @@
+DIGITE O VALOR DO ITEM 1
+VALOR DO ITEM 1 ZERADO
+DIGITE O VALOR DO ITEM 1
+DIGITE O VALOR DO ITEM 2
+DIGITE O VALOR DO ITEM 3
+VALOR TOTAL DA COMPRA: 00003575
+DESEJA DAR DESCONTO (S)SIM OU (N)NAO
+DIGITE O VALOR DO DESCONTO
+DIGITE O VALOR DO DESCONTO
+**----------------------------------**
+** VALOR DO ITEM 1.......:          10,50
+** VALOR DO ITEM 2.......:          20,25
+** VALOR DO ITEM 3.......:           5,00
+**-------------------------
+** VALOR TOTAL DA COMPRA.:          35,75
+** VALOR DO DESCONTO.....:-          3,75
+**-------------------------
+** VALOR TOTAL FINAL.....:          32,00
+**----------------------------------**
+FIM DE PROGRAMA

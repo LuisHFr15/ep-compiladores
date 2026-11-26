@@ -8,6 +8,7 @@ trap 'rm -rf "$tmp"' EXIT
 cd "$root"
 rm -rf tests/expected
 mkdir -p tests/expected
+printf '!*.out\n' > tests/expected/.gitignore
 
 while read -r name opts; do
 	[ -z "$name" ] && continue
