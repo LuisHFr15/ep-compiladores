@@ -17,8 +17,8 @@ var routineGroup = map[string]string{
 	"rt_load": "num", "rt_store": "num", "rt_add": "num", "rt_sub": "num", "rt_mul": "num",
 	"rt_div": "num", "rt_pow": "num", "rt_cmp": "num", "rt_neg": "num", "rt_num_to_int": "num",
 	"rt_num_from_int": "num", "rt_accept_num": "num", "rt_copy": "num", "rt_get_int": "num",
-	"rt_put_int": "num",
-	"rt_edit":    "edit",
+	"rt_put_int": "num", "rt_inspect": "inspect",
+	"rt_edit": "edit",
 }
 
 type gen struct {
