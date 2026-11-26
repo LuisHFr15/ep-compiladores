@@ -233,7 +233,16 @@ Arquivo: tests/input_programs/prog003_calculadora.cob
 229    83     31    PERIOD           .
 230    84     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
 nenhum
 
 === Identificação (§3.1) ===

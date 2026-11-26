@@ -570,7 +570,16 @@ Arquivo: tests/input_programs/prog007_loja.cob
 566    228    32    PERIOD           .
 567    229    1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
 nenhum
 
 === Identificação (§3.1) ===

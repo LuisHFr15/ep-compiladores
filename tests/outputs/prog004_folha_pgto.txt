@@ -225,7 +225,16 @@ Arquivo: tests/input_programs/prog004_folha_pgto.cob
 221    77     30    PERIOD           .
 222    78     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
 nenhum
 
 === Identificação (§3.1) ===

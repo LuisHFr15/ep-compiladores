@@ -229,7 +229,16 @@ Arquivo: tests/input_programs/prog006_files.cob
 225    76     33    PERIOD           .
 226    77     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
 nenhum
 
 === Identificação (§3.1) ===

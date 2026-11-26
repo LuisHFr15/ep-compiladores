@@ -80,7 +80,16 @@ Arquivo: tests/input_programs/prog001_divisoes.cob
 76     58     28    PERIOD           .
 77     59     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
 nenhum
 
 === Identificação (§3.1) ===

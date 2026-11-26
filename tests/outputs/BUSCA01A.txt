@@ -1,0 +1,230 @@
+Arquivo: tests/input_programs/BUSCA01A.cbl
+
+=== Fluxo de tokens (209) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      7      8     KEYWORD          IDENTIFICATION
+2      7      23    KEYWORD          DIVISION
+3      7      31    PERIOD           .
+4      8      8     KEYWORD          PROGRAM-ID
+5      8      18    PERIOD           .
+6      8      20    IDENT            BUSCA01A
+7      8      28    PERIOD           .
+8      10     8     KEYWORD          ENVIRONMENT
+9      10     20    KEYWORD          DIVISION
+10     10     28    PERIOD           .
+11     11     8     IDENT            CONFIGURATION
+12     11     22    KEYWORD          SECTION
+13     11     29    PERIOD           .
+14     12     8     IDENT            SPECIAL-NAMES
+15     12     21    PERIOD           .
+16     13     12    IDENT            DECIMAL-POINT
+17     13     26    IDENT            IS
+18     13     29    IDENT            COMMA
+19     13     34    PERIOD           .
+20     15     8     IDENT            INPUT-OUTPUT
+21     15     21    KEYWORD          SECTION
+22     15     28    PERIOD           .
+23     16     8     IDENT            FILE-CONTROL
+24     16     20    PERIOD           .
+25     17     12    IDENT            SELECT
+26     17     19    IDENT            ARQUIVO-ENTRADA
+27     17     35    IDENT            ASSIGN
+28     17     42    IDENT            TO
+29     17     45    STRING           'CADASTRO2.dat'
+30     18     16    IDENT            ORGANIZATION
+31     18     29    IDENT            IS
+32     18     32    IDENT            LINE
+33     18     37    IDENT            SEQUENTIAL
+34     18     47    PERIOD           .
+35     20     8     KEYWORD          DATA
+36     20     13    KEYWORD          DIVISION
+37     20     21    PERIOD           .
+38     21     8     IDENT            FILE
+39     21     13    KEYWORD          SECTION
+40     21     20    PERIOD           .
+41     22     8     IDENT            FD
+42     22     11    IDENT            ARQUIVO-ENTRADA
+43     22     26    PERIOD           .
+44     23     8     NUMBER           01
+45     23     11    IDENT            REGISTRO-ENTRADA
+46     23     27    PERIOD           .
+47     24     11    NUMBER           05
+48     24     14    IDENT            NOME
+49     24     40    KEYWORD          PIC
+50     24     44    PICTURE-STRING   X(30)
+51     24     50    IDENT            VALUE
+52     24     56    IDENT            SPACES
+53     24     62    PERIOD           .
+54     25     11    NUMBER           05
+55     25     14    IDENT            IDADE
+56     25     40    KEYWORD          PIC
+57     25     44    PICTURE-STRING   9(02)
+58     25     50    IDENT            VALUE
+59     25     56    IDENT            ZEROS
+60     25     61    PERIOD           .
+61     26     11    NUMBER           05
+62     26     14    IDENT            CPF
+63     26     40    KEYWORD          PIC
+64     26     44    PICTURE-STRING   9(11)
+65     26     50    IDENT            VALUE
+66     26     56    IDENT            ZEROS
+67     26     61    PERIOD           .
+68     28     8     IDENT            WORKING-STORAGE
+69     28     24    KEYWORD          SECTION
+70     28     31    PERIOD           .
+71     29     8     NUMBER           01
+72     29     11    IDENT            WRK-FIM-ARQUIVO
+73     29     40    KEYWORD          PIC
+74     29     44    PICTURE-STRING   X(01)
+75     29     50    IDENT            VALUE
+76     29     56    STRING           'N'
+77     29     59    PERIOD           .
+78     30     8     NUMBER           01
+79     30     11    IDENT            WRK-CPF-PROCURADO
+80     30     40    KEYWORD          PIC
+81     30     44    PICTURE-STRING   9(11)
+82     30     50    IDENT            VALUE
+83     30     56    IDENT            ZEROS
+84     30     61    PERIOD           .
+85     31     8     NUMBER           01
+86     31     11    IDENT            WRK-CPF-LISTADO
+87     31     40    KEYWORD          PIC
+88     31     44    PICTURE-STRING   9(11)
+89     31     50    IDENT            VALUE
+90     31     56    IDENT            ZEROS
+91     31     61    PERIOD           .
+92     32     8     NUMBER           01
+93     32     11    IDENT            WRK-CPF-ENCONTRADO
+94     32     40    KEYWORD          PIC
+95     32     44    PICTURE-STRING   X(01)
+96     32     50    IDENT            VALUE
+97     32     56    STRING           'N'
+98     32     59    PERIOD           .
+99     33     8     NUMBER           01
+100    33     11    IDENT            WRK-IND1
+101    33     40    KEYWORD          PIC
+102    33     44    PICTURE-STRING   9(02)
+103    33     50    IDENT            VALUE
+104    33     56    IDENT            ZEROS
+105    33     61    PERIOD           .
+106    36     8     KEYWORD          PROCEDURE
+107    36     40    KEYWORD          DIVISION
+108    36     48    PERIOD           .
+109    43     8     IDENT            0000-PROCESSAR
+110    43     40    KEYWORD          SECTION
+111    43     47    PERIOD           .
+112    46     12    IDENT            OPEN
+113    46     17    IDENT            INPUT
+114    46     23    IDENT            ARQUIVO-ENTRADA
+115    48     12    KEYWORD          PERFORM
+116    48     20    IDENT            0001-LER-ARQUIVO
+117    50     12    KEYWORD          DISPLAY
+118    50     20    STRING           'DIGITE O CPF A SER PROCURADO: '
+119    51     12    KEYWORD          ACCEPT
+120    51     19    IDENT            WRK-CPF-PROCURADO
+121    53     12    KEYWORD          PERFORM
+122    53     20    IDENT            0002-BUSCAR-CPF
+123    53     36    IDENT            UNTIL
+124    53     42    IDENT            WRK-CPF-ENCONTRADO
+125    53     61    IDENT            EQUAL
+126    53     67    STRING           'S'
+127    54     39    IDENT            OR
+128    54     42    IDENT            WRK-FIM-ARQUIVO
+129    54     58    IDENT            EQUAL
+130    54     64    STRING           'S'
+131    55     12    IDENT            CLOSE
+132    55     18    IDENT            ARQUIVO-ENTRADA
+133    57     12    KEYWORD          PERFORM
+134    57     20    IDENT            9999-FINALIZAR
+135    58     12    PERIOD           .
+136    61     8     IDENT            0000-END
+137    61     16    PERIOD           .
+138    61     40    IDENT            EXIT
+139    61     44    PERIOD           .
+140    67     8     IDENT            0001-LER-ARQUIVO
+141    67     40    KEYWORD          SECTION
+142    67     47    PERIOD           .
+143    70     12    IDENT            READ
+144    70     17    IDENT            ARQUIVO-ENTRADA
+145    70     33    IDENT            INTO
+146    70     38    IDENT            REGISTRO-ENTRADA
+147    71     15    IDENT            AT
+148    71     18    IDENT            END
+149    72     18    KEYWORD          MOVE
+150    72     23    STRING           'S'
+151    72     35    IDENT            TO
+152    72     38    IDENT            WRK-FIM-ARQUIVO
+153    73     18    KEYWORD          DISPLAY
+154    73     26    STRING           'CPF NÃO ENCONTRADO!'
+155    74     15    IDENT            NOT
+156    74     19    IDENT            AT
+157    74     22    IDENT            END
+158    75     18    KEYWORD          MOVE
+159    75     23    IDENT            CPF
+160    75     35    IDENT            TO
+161    75     38    IDENT            WRK-CPF-LISTADO
+162    76     18    IDENT            ADD
+163    76     22    NUMBER           1
+164    76     35    IDENT            TO
+165    76     38    IDENT            WRK-IND1
+166    77     12    IDENT            END-READ
+167    78     12    PERIOD           .
+168    81     8     IDENT            0001-END
+169    81     16    PERIOD           .
+170    81     40    IDENT            EXIT
+171    81     44    PERIOD           .
+172    88     8     IDENT            0002-BUSCAR-CPF
+173    88     40    KEYWORD          SECTION
+174    88     47    PERIOD           .
+175    91     12    KEYWORD          IF
+176    91     15    IDENT            WRK-CPF-PROCURADO
+177    91     37    IDENT            EQUAL
+178    91     43    IDENT            WRK-CPF-LISTADO
+179    92     15    KEYWORD          DISPLAY
+180    92     23    STRING           'CPF ENCONTRADO!'
+181    93     15    KEYWORD          MOVE
+182    93     20    STRING           'S'
+183    93     40    IDENT            TO
+184    93     43    IDENT            WRK-CPF-ENCONTRADO
+185    94     12    KEYWORD          ELSE
+186    95     15    KEYWORD          PERFORM
+187    95     23    IDENT            0001-LER-ARQUIVO
+188    96     12    IDENT            END-IF
+189    97     12    PERIOD           .
+190    100    8     IDENT            0002-END
+191    100    16    PERIOD           .
+192    100    40    IDENT            EXIT
+193    100    44    PERIOD           .
+194    106    8     IDENT            9999-FINALIZAR
+195    106    40    KEYWORD          SECTION
+196    106    47    PERIOD           .
+197    108    12    KEYWORD          DISPLAY
+198    108    20    STRING           'FIM DE PROGRAMA'
+199    109    12    KEYWORD          DISPLAY
+200    109    20    STRING           'QUANTIDADE DE REGISTROS LIDOS: '
+201    109    54    IDENT            WRK-IND1
+202    110    12    KEYWORD          STOP
+203    110    17    KEYWORD          RUN
+204    111    13    PERIOD           .
+205    114    8     IDENT            9999-END
+206    114    16    PERIOD           .
+207    114    40    IDENT            EXIT
+208    114    44    PERIOD           .
+209    115    1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: BUSCA01A
+
+Resultado: SUCESSO
