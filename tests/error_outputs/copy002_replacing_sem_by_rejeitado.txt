@@ -1,0 +1,43 @@
+Arquivo: tests/copy_programs/copy002_replacing_sem_by.cob
+
+=== Fluxo de tokens (22) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            COPY002
+7      2      27    PERIOD           .
+8      3      8     KEYWORD          DATA
+9      3      13    KEYWORD          DIVISION
+10     3      21    PERIOD           .
+11     4      8     IDENT            WORKING-STORAGE
+12     4      24    KEYWORD          SECTION
+13     4      31    PERIOD           .
+14     6      8     KEYWORD          PROCEDURE
+15     6      18    KEYWORD          DIVISION
+16     6      26    PERIOD           .
+17     7      8     IDENT            INICIO
+18     7      14    PERIOD           .
+19     8      12    KEYWORD          STOP
+20     8      17    KEYWORD          RUN
+21     8      20    PERIOD           .
+22     9      1     EOF              
+
+=== Erros de COPY (1) ===
+[E] linha 5, col 8: COPY inválido: esperado BY depois de ':TAG:' em REPLACING
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+não identificado
+
+Resultado: FALHA (1 erros de COPY)

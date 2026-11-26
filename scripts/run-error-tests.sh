@@ -40,7 +40,7 @@ rej_ok=0
 while read -r name expected; do
 	[ -z "$name" ] && continue
 	rej_total=$((rej_total + 1))
-	file="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl tests/semantic_programs/"$name".cob 2>/dev/null | head -1)"
+	file="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl tests/semantic_programs/"$name".cob tests/copy_programs/"$name".cob 2>/dev/null | head -1)"
 	out="$outputs/${name}_rejeitado.txt"
 	if "$tmp/cobolc" -o "$out" -asm "$tmp/$name.asm" "$file" >/dev/null 2>&1; then
 		echo "[FALHA] $name: foi aceito"
@@ -59,7 +59,7 @@ acc_ok=0
 while read -r name _; do
 	[ -z "$name" ] && continue
 	acc_total=$((acc_total + 1))
-	file="tests/lexical_programs/$name.cob"
+	file="$(ls tests/lexical_programs/"$name".cob tests/copy_programs/"$name".cob 2>/dev/null | head -1)"
 	out="$outputs/${name}_aceito.txt"
 	if "$tmp/cobolc" -o "$out" -asm "$tmp/$name.asm" "$file" >/dev/null 2>&1; then
 		acc_ok=$((acc_ok + 1))

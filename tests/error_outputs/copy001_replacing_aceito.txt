@@ -1,0 +1,100 @@
+Arquivo: tests/copy_programs/copy001_replacing.cob
+
+=== Fluxo de tokens (79) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            COPY001
+7      2      27    PERIOD           .
+8      3      8     KEYWORD          DATA
+9      3      13    KEYWORD          DIVISION
+10     3      21    PERIOD           .
+11     4      8     IDENT            WORKING-STORAGE
+12     4      24    KEYWORD          SECTION
+13     4      31    PERIOD           .
+14     5      8     NUMBER           01
+15     5      11    IDENT            WS-CAMPO
+16     5      20    KEYWORD          PIC
+17     5      24    PICTURE-STRING   X(10)
+18     5      30    IDENT            VALUE
+19     5      36    STRING           "OLA:MUNDO"
+20     5      47    PERIOD           .
+21     6      8     NUMBER           01
+22     6      11    IDENT            WS-NUM
+23     6      20    KEYWORD          PIC
+24     6      24    PICTURE-STRING   9(3)
+25     6      29    IDENT            VALUE
+26     6      35    NUMBER           42
+27     6      37    PERIOD           .
+28     7      8     NUMBER           01
+29     7      11    IDENT            AUX-CAMPO
+30     7      21    KEYWORD          PIC
+31     7      25    PICTURE-STRING   X(10)
+32     7      31    IDENT            VALUE
+33     7      37    STRING           "OLA:MUNDO"
+34     7      48    PERIOD           .
+35     8      8     NUMBER           01
+36     8      11    IDENT            AUX-NUM
+37     8      21    KEYWORD          PIC
+38     8      25    PICTURE-STRING   9(3)
+39     8      30    IDENT            VALUE
+40     8      36    NUMBER           42
+41     8      38    PERIOD           .
+42     9      8     NUMBER           01
+43     9      11    IDENT            NEW-NAME
+44     9      22    KEYWORD          PIC
+45     9      26    PICTURE-STRING   9
+46     9      28    IDENT            VALUE
+47     9      34    NUMBER           7
+48     9      35    PERIOD           .
+49     10     8     NUMBER           01
+50     10     11    IDENT            OLD-NAME-X
+51     10     22    KEYWORD          PIC
+52     10     26    PICTURE-STRING   9
+53     10     28    IDENT            VALUE
+54     10     34    NUMBER           3
+55     10     35    PERIOD           .
+56     11     8     KEYWORD          PROCEDURE
+57     11     18    KEYWORD          DIVISION
+58     11     26    PERIOD           .
+59     12     8     IDENT            INICIO
+60     12     14    PERIOD           .
+61     13     12    KEYWORD          DISPLAY
+62     13     20    IDENT            WS-CAMPO
+63     13     29    STRING           " "
+64     13     33    IDENT            WS-NUM
+65     13     39    PERIOD           .
+66     14     12    KEYWORD          DISPLAY
+67     14     20    IDENT            AUX-CAMPO
+68     14     30    STRING           " "
+69     14     34    IDENT            AUX-NUM
+70     14     41    PERIOD           .
+71     15     12    KEYWORD          DISPLAY
+72     15     20    IDENT            NEW-NAME
+73     15     29    STRING           " "
+74     15     33    IDENT            OLD-NAME-X
+75     15     43    PERIOD           .
+76     16     12    KEYWORD          STOP
+77     16     17    KEYWORD          RUN
+78     16     20    PERIOD           .
+79     17     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: COPY001
+
+Resultado: SUCESSO

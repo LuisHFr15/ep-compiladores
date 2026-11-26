@@ -1,0 +1,2 @@
+       01 OLD-NAME   PIC 9 VALUE 7.
+       01 OLD-NAME-X PIC 9 VALUE 3.
