@@ -950,3 +950,37 @@ ran_st:
         lw   $ra, 0($sp)
         addiu $sp, $sp, 24
         jr   $ra
+
+# rt_get_int(a0=addr, a1=size) -> v0 = valor dos digitos ASCII
+rt_get_int:
+        li   $v0, 0
+        li   $t0, 0
+        li   $t5, 10
+rgi_l:
+        bge  $t0, $a1, rgi_e
+        addu $t1, $a0, $t0
+        lbu  $t2, 0($t1)
+        addiu $t2, $t2, -48
+        mul  $v0, $v0, $t5
+        addu $v0, $v0, $t2
+        addiu $t0, $t0, 1
+        j    rgi_l
+rgi_e:
+        jr   $ra
+
+# rt_put_int(a0=addr, a1=size, a2=valor)
+rt_put_int:
+        move $t0, $a1
+        li   $t5, 10
+rpt_l:
+        blez $t0, rpt_e
+        addiu $t0, $t0, -1
+        div  $a2, $t5
+        mfhi $t2
+        mflo $a2
+        addu $t1, $a0, $t0
+        addiu $t2, $t2, 48
+        sb   $t2, 0($t1)
+        j    rpt_l
+rpt_e:
+        jr   $ra
