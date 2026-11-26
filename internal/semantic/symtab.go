@@ -23,7 +23,7 @@ type Symbol struct {
 	Base     int
 	IsIndex  bool
 	Strides  []int
-	rel      int
+	Rel      int
 }
 
 func (s *Symbol) Total() int {
@@ -191,7 +191,7 @@ func (in *Info) addItem(item *ast.DataItem, parent *Symbol) *Symbol {
 	for _, c := range item.Children {
 		cs := in.addItem(c, sym)
 		sym.Children = append(sym.Children, cs)
-		cs.rel = rel
+		cs.Rel = rel
 		rel += cs.Total()
 	}
 
@@ -221,7 +221,7 @@ func (in *Info) addItem(item *ast.DataItem, parent *Symbol) *Symbol {
 }
 
 func (in *Info) assignOffsets(sym *Symbol, parentOff int, strides []int) {
-	sym.Offset = parentOff + sym.rel
+	sym.Offset = parentOff + sym.Rel
 	sym.Strides = append([]int(nil), strides...)
 	if sym.Occurs > 0 {
 		sym.Strides = append(sym.Strides, sym.ElemSize)
@@ -341,4 +341,19 @@ func (in *Info) lookup(r *ast.Ref) *Symbol {
 		in.errorf(r.Pos, "referência ambígua a '%s'; qualifique com OF", r.Name)
 	}
 	return nil
+}
+
+func (in *Info) ByName(name string) *Symbol {
+	if list := in.byName[name]; len(list) > 0 {
+		return list[0]
+	}
+	return nil
+}
+
+func (in *Info) FileByName(name string) *FileInfo {
+	return in.fileByName[name]
+}
+
+func (in *Info) RecordFile(name string) *FileInfo {
+	return in.recordFile[name]
 }
