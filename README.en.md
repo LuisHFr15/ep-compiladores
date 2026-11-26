@@ -119,7 +119,7 @@ Continuation applies to **literals** and to **words** split at the end of column
 
 ### Lexical errors
 
-All `E`, formatted as `[E] linha L, col C: message`: invalid character, `_` outside the program name, unterminated literal, continuation without a quote, identifier over 30 characters or with a leading/trailing hyphen, number with two decimal points, invalid column-7 indicator and **git merge conflict marker**.
+All `E`, formatted as `[E] linha L, col C: message`: invalid character, `_` outside the program name, unterminated literal, continuation without a quote, identifier over 30 characters or with a leading/trailing hyphen, number with two decimal points, invalid column-7 indicator and **git merge conflict marker**. The free text of the `AUTHOR`, `INSTALLATION`, `DATE-WRITTEN`, `DATE-COMPILED`, `SECURITY` and `REMARKS` paragraphs (IDENTIFICATION) does not raise invalid-character errors.
 
 ---
 

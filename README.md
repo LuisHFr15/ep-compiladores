@@ -117,7 +117,7 @@ A continuação vale para **literais** e para **palavras** partidas no fim da co
 
 ### Erros léxicos
 
-Todos `E`, no formato `[E] linha L, col C: mensagem`: caractere inválido, `_` fora do nome do programa, literal não terminado, continuação sem aspa, identificador com mais de 30 caracteres ou com hífen no início/fim, número com dois pontos decimais, indicador inválido na coluna 7 e **marcador de conflito de merge do git**.
+Todos `E`, no formato `[E] linha L, col C: mensagem`: caractere inválido, `_` fora do nome do programa, literal não terminado, continuação sem aspa, identificador com mais de 30 caracteres ou com hífen no início/fim, número com dois pontos decimais, indicador inválido na coluna 7 e **marcador de conflito de merge do git**. O texto livre dos parágrafos `AUTHOR`, `INSTALLATION`, `DATE-WRITTEN`, `DATE-COMPILED`, `SECURITY` e `REMARKS` (IDENTIFICATION) não gera erro de caractere inválido.
 
 ---
 
