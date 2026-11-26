@@ -26,7 +26,7 @@ Trabalho (EP) da disciplina de **Introdução à Compiladores**. O `cobolc` é u
 
 Dado um arquivo COBOL, o `cobolc`:
 
-1. **Pré-processa** `COPY nome.`, expandindo o copybook (procurado na pasta do fonte e em `-I`).
+1. **Pré-processa** `COPY nome.` e `COPY nome REPLACING ==a== BY ==b==.`, expandindo o copybook (procurado na pasta do fonte e em `-I`).
 2. **Gera o fluxo de tokens**, respeitando o layout de colunas, e reporta os erros léxicos.
 3. **Analisa a sintaxe** das 4 divisões e dos comandos, reportando todos os erros de sintaxe encontrados.
 4. **Analisa a semântica**: tabela de símbolos e as 4 checagens do §4 da especificação.
@@ -199,6 +199,7 @@ Resultado atual: **11/11** programas com saída idêntica à do GnuCOBOL; **7/7*
 - `PERFORM VARYING`, `PERFORM` em linha, `INITIALIZE`, `CALL`, referência por posição (`X(1:2)`), `REDEFINES`, `COMP`/`COMP-3` e `SCREEN SECTION` não são suportados e geram erro claro.
 - O arquivo indexado é simulado (até 256 registros) e tem formato próprio, não compatível com ISAM.
 - Depois de um `COPY` expandido, a numeração das linhas nos diagnósticos fica deslocada.
+- `COPY ... REPLACING` aceita `==pseudo-texto==` e palavras; `LEADING`/`TRAILING`, literais como operando e nome de copybook entre aspas não são suportados.
 - O MARS bloqueia um nome de arquivo depois de um `OPEN` de leitura que falha; o runtime contorna prefixando `./` ao caminho.
 
 ---

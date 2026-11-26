@@ -28,7 +28,7 @@ Course project (EP) for **Introduction to Compilers**. `cobolc` is a compiler wr
 
 Given a COBOL file, `cobolc`:
 
-1. **Preprocesses** `COPY name.`, expanding the copybook (searched in the source folder and in `-I`).
+1. **Preprocesses** `COPY name.` and `COPY name REPLACING ==a== BY ==b==.`, expanding the copybook (searched in the source folder and in `-I`).
 2. **Produces the token stream**, honoring the column layout, and reports lexical errors.
 3. **Parses** the 4 divisions and the statements, reporting every syntax error it finds.
 4. **Analyzes semantics**: symbol table and the 4 checks of §4 of the specification.
@@ -193,6 +193,7 @@ Current result: **11/11** programs with output identical to GnuCOBOL; **7/7** pr
 - `PERFORM VARYING`, inline `PERFORM`, `INITIALIZE`, `CALL`, reference modification (`X(1:2)`), `REDEFINES`, `COMP`/`COMP-3` and `SCREEN SECTION` are not supported and give a clear error.
 - The indexed file is simulated (up to 256 records) in its own format, not ISAM-compatible.
 - After an expanded `COPY`, line numbers in diagnostics are shifted.
+- `COPY ... REPLACING` accepts `==pseudo-text==` and words; `LEADING`/`TRAILING`, literal operands and quoted copybook names are not supported.
 - MARS blocks a file name after a failed read `OPEN`; the runtime works around it by prefixing `./` to the path.
 
 ---
