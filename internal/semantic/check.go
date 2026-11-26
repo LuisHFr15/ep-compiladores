@@ -93,12 +93,18 @@ func (in *Info) stmt(s ast.Stmt) {
 	case *ast.Evaluate:
 		in.expr(s.Subject)
 		for _, w := range s.Whens {
-			in.exprs(w.Values)
+			for _, a := range w.Alts {
+				if a.Value != nil {
+					in.expr(a.Value)
+				}
+			}
 			in.stmts(w.Body)
 		}
 		in.stmts(s.Other)
 	case *ast.Perform:
-		in.target(s.Target)
+		if s.Target != nil {
+			in.target(s.Target)
+		}
 		if s.Thru != nil {
 			in.target(s.Thru)
 			a, b := in.LabelIndex[s.Target.Text], in.LabelIndex[s.Thru.Text]
@@ -106,8 +112,19 @@ func (in *Info) stmt(s ast.Stmt) {
 				in.errorf(s.Thru.Pos, "THRU '%s' precede o parágrafo inicial '%s'", s.Thru.Text, s.Target.Text)
 			}
 		}
+		if s.Varying != nil {
+			in.ref(s.Varying.Var, false)
+			in.expr(s.Varying.From)
+			in.expr(s.Varying.By)
+		}
 		if s.Until != nil {
 			in.cond(s.Until)
+		}
+		in.stmts(s.Body)
+	case *ast.Initialize:
+		in.refs(s.Targets)
+		for _, r := range s.Replacing {
+			in.expr(r.Value)
 		}
 	case *ast.GoTo:
 		in.target(s.Target)
@@ -166,7 +183,14 @@ func (in *Info) stmt(s ast.Stmt) {
 }
 
 func (in *Info) inspect(s *ast.Inspect) {
-	in.ref(s.Target, false)
+	if s.Func != nil {
+		in.expr(s.Func)
+		if len(s.Replacing) > 0 || s.Convert != nil {
+			in.errorf(s.Pos, "INSPECT com FUNCTION só aceita TALLYING")
+		}
+	} else {
+		in.ref(s.Target, false)
+	}
 	region := func(r ast.Region) {
 		if r.After != nil {
 			in.expr(r.After)
@@ -213,10 +237,12 @@ func (in *Info) expr(e ast.Expr) {
 	case *ast.Ref:
 		in.ref(e, false)
 	case *ast.FuncCall:
-		if e.Name != "UPPER-CASE" {
+		if e.Name != "UPPER-CASE" && e.Name != "REVERSE" {
 			in.errorf(e.Pos, "função '%s' não suportada", e.Name)
 		}
 		in.exprs(e.Args)
+	case *ast.LengthOf:
+		in.ref(e.Ref, true)
 	case *ast.Binary:
 		in.expr(e.L)
 		in.expr(e.R)
@@ -252,6 +278,19 @@ func (in *Info) ref(r *ast.Ref, allowTable bool) *Symbol {
 		return nil
 	}
 	in.Refs[r] = sym
+	if r.Start != nil {
+		in.expr(r.Start)
+		if n, ok := r.Start.(*ast.NumLit); ok && n.Text == "0" {
+			in.errorf(r.Pos, "posição inicial de '%s' deve ser maior que zero", r.Name)
+		}
+		if r.Len != nil {
+			if _, ok := r.Len.(*ast.NumLit); !ok {
+				in.errorf(r.Pos, "tamanho da referência por posição de '%s' deve ser uma constante numérica", r.Name)
+			}
+		} else if _, ok := r.Start.(*ast.NumLit); !ok {
+			in.errorf(r.Pos, "referência por posição de '%s' sem tamanho exige posição inicial constante", r.Name)
+		}
+	}
 
 	need, got := len(sym.Strides), len(r.Subs)
 	switch {
@@ -265,13 +304,16 @@ func (in *Info) ref(r *ast.Ref, allowTable bool) *Symbol {
 
 func (in *Info) category(e ast.Expr) Category {
 	switch e := e.(type) {
-	case *ast.NumLit, *ast.Binary, *ast.Neg:
+	case *ast.NumLit, *ast.Binary, *ast.Neg, *ast.LengthOf:
 		return CatNumeric
 	case *ast.Figurative:
 		if e.Kind == "ZERO" {
 			return CatNumeric
 		}
 	case *ast.Ref:
+		if e.Start != nil {
+			return CatAlnum
+		}
 		if sym := in.Refs[e]; sym != nil {
 			return sym.Cat
 		}
