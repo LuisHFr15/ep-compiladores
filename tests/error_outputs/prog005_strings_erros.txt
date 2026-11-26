@@ -241,10 +241,19 @@ Arquivo: tests/error_programs/prog005_strings_erros.cob
 237    75     34    PERIOD           .
 238    76     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (1) ===
 [E] linha 18, col 13: caractere inválido '_'
 
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
 === Identificação (§3.1) ===
-PROGRAM-ID: PROG008_STRING
+não identificado
 
 Resultado: FALHA (1 erros léxicos)

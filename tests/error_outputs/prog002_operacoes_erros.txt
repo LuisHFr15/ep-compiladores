@@ -323,11 +323,20 @@ Arquivo: tests/error_programs/prog002_operacoes_erros.cob
 319    100    37    PERIOD           .
 320    101    1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (2) ===
 [E] linha 16, col 49: literal numérico inválido '10.5.3': mais de um ponto decimal
 [E] linha 27, col 20: literal alfanumérico não terminado: falta a aspa de fechamento (")
 
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
 === Identificação (§3.1) ===
-PROGRAM-ID: YOUR-PROGRAM-NAME
+não identificado
 
 Resultado: FALHA (2 erros léxicos)

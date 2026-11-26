@@ -233,11 +233,20 @@ Arquivo: tests/error_programs/prog003_calculadora_erros.cob
 229    83     31    PERIOD           .
 230    84     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (2) ===
 [E] linha 20, col 15: identificador 'WKS-OPCAO-' não pode terminar com hífen
 [E] linha 21, col 15: identificador 'WKS-OPCAO-DE-SAIR-DA-CALCULADORA' excede 30 caracteres (tem 32)
 
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
 === Identificação (§3.1) ===
-PROGRAM-ID: CALCULADORA
+não identificado
 
 Resultado: FALHA (2 erros léxicos)

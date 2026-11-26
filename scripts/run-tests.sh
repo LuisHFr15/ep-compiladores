@@ -2,7 +2,6 @@
 set -u
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-inputs="tests/input_programs"
 outputs="tests/outputs"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
@@ -16,18 +15,20 @@ rm -f "$outputs"/*.txt
 total=0
 passed=0
 
-for file in "$inputs"/*.cob; do
+while read -r name _; do
+	[ -z "$name" ] && continue
 	total=$((total + 1))
-	out="$outputs/$(basename "$file" .cob).txt"
+	file="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl 2>/dev/null | head -1)"
+	out="$outputs/$name.txt"
 	echo "=== $file -> $out ==="
-	if "$tmp/cobolc" -o "$out" "$file" 2>&1; then
+	if "$tmp/cobolc" -o "$out" -asm "$tmp/$name.asm" "$file" > /dev/null 2>&1; then
 		passed=$((passed + 1))
 		echo "[OK]"
 	else
 		echo "[FALHA]"
 	fi
 	echo
-done
+done < tests/programs.txt
 
 echo "Resumo: $passed/$total passaram"
 [ "$passed" -eq "$total" ]

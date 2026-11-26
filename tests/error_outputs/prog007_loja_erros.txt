@@ -570,11 +570,20 @@ Arquivo: tests/error_programs/prog007_loja_erros.cob
 566    228    32    PERIOD           .
 567    229    1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (2) ===
 [E] linha 26, col 45: literal alfanumérico não terminado: falta a aspa de fechamento (')
 [E] linha 64, col 50: caractere inválido '$'
 
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
 === Identificação (§3.1) ===
-PROGRAM-ID: PROG007_LOJA
+não identificado
 
 Resultado: FALHA (2 erros léxicos)

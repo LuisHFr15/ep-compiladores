@@ -1,0 +1,82 @@
+Arquivo: tests/semantic_programs/sem002_identificadores.cob
+
+=== Fluxo de tokens (60) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            SEM002
+7      2      26    PERIOD           .
+8      3      8     KEYWORD          DATA
+9      3      13    KEYWORD          DIVISION
+10     3      21    PERIOD           .
+11     4      8     IDENT            WORKING-STORAGE
+12     4      24    KEYWORD          SECTION
+13     4      31    PERIOD           .
+14     5      8     NUMBER           77
+15     5      11    IDENT            CONT
+16     5      27    KEYWORD          PIC
+17     5      31    PICTURE-STRING   9
+18     5      32    PERIOD           .
+19     6      8     NUMBER           77
+20     6      11    IDENT            CONT
+21     6      27    KEYWORD          PIC
+22     6      31    PICTURE-STRING   9
+23     6      32    PERIOD           .
+24     7      8     NUMBER           01
+25     7      11    IDENT            GRUPO-1
+26     7      18    PERIOD           .
+27     8      11    NUMBER           05
+28     8      14    IDENT            CAMPO
+29     8      27    KEYWORD          PIC
+30     8      31    PICTURE-STRING   9
+31     8      32    PERIOD           .
+32     9      8     NUMBER           01
+33     9      11    IDENT            GRUPO-2
+34     9      18    PERIOD           .
+35     10     11    NUMBER           05
+36     10     14    IDENT            CAMPO
+37     10     27    KEYWORD          PIC
+38     10     31    PICTURE-STRING   9
+39     10     32    PERIOD           .
+40     11     8     KEYWORD          PROCEDURE
+41     11     18    KEYWORD          DIVISION
+42     11     26    PERIOD           .
+43     12     8     IDENT            INICIO
+44     12     14    PERIOD           .
+45     13     12    KEYWORD          MOVE
+46     13     17    NUMBER           1
+47     13     19    IDENT            TO
+48     13     22    IDENT            CAMPO
+49     13     27    PERIOD           .
+50     14     12    KEYWORD          MOVE
+51     14     17    NUMBER           1
+52     14     19    IDENT            TO
+53     14     22    IDENT            CAMPO
+54     14     28    IDENT            OF
+55     14     31    IDENT            GRUPO-1
+56     14     38    PERIOD           .
+57     15     12    KEYWORD          STOP
+58     15     17    KEYWORD          RUN
+59     15     20    PERIOD           .
+60     16     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (2) ===
+[E] linha 6, col 8: identificador 'CONT' declarado mais de uma vez no mesmo escopo
+[E] linha 13, col 22: referência ambígua a 'CAMPO'; qualifique com OF
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: SEM002
+
+Resultado: FALHA (2 erros semânticos)

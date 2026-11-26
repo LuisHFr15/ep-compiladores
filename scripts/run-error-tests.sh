@@ -34,4 +34,23 @@ for file in "$inputs"/*.cob; do
 done
 
 echo "Resumo: $detected/$total programas com erros detectados, $errors erros no total"
-[ "$detected" -eq "$total" ]
+
+rej_total=0
+rej_ok=0
+while read -r name expected; do
+	[ -z "$name" ] && continue
+	rej_total=$((rej_total + 1))
+	file="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl tests/semantic_programs/"$name".cob 2>/dev/null | head -1)"
+	out="$outputs/${name}_rejeitado.txt"
+	if "$tmp/cobolc" -o "$out" -asm "$tmp/$name.asm" "$file" >/dev/null 2>&1; then
+		echo "[FALHA] $name: foi aceito"
+	elif grep -q -- "$expected" "$out"; then
+		rej_ok=$((rej_ok + 1))
+		echo "[OK] $name rejeitado: $expected"
+	else
+		echo "[FALHA] $name: rejeitado sem a mensagem esperada ($expected)"
+	fi
+done < tests/rejected.txt
+
+echo "Rejeitados: $rej_ok/$rej_total"
+[ "$detected" -eq "$total" ] && [ "$rej_ok" -eq "$rej_total" ]

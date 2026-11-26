@@ -224,12 +224,21 @@ Arquivo: tests/error_programs/prog004_folha_pgto_erros.cob
 220    77     30    PERIOD           .
 221    78     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (3) ===
 [E] linha 27, col 18: literal alfanumérico não terminado: falta a aspa de fechamento (")
 [E] linha 28, col 8: continuação de literal deve iniciar com aspa (")
 [E] linha 34, col 23: identificador '-IDX' não pode iniciar com hífen
 
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
 === Identificação (§3.1) ===
-PROGRAM-ID: FOLHA-PGTO
+não identificado
 
 Resultado: FALHA (3 erros léxicos)

@@ -1,0 +1,77 @@
+Arquivo: tests/semantic_programs/sem004_arquivos.cob
+
+=== Fluxo de tokens (54) ===
+#      LINHA  COL   TIPO             LEXEMA
+1      1      8     KEYWORD          IDENTIFICATION
+2      1      23    KEYWORD          DIVISION
+3      1      31    PERIOD           .
+4      2      8     KEYWORD          PROGRAM-ID
+5      2      18    PERIOD           .
+6      2      20    IDENT            SEM004
+7      2      26    PERIOD           .
+8      3      8     KEYWORD          ENVIRONMENT
+9      3      20    KEYWORD          DIVISION
+10     3      28    PERIOD           .
+11     4      8     IDENT            INPUT-OUTPUT
+12     4      21    KEYWORD          SECTION
+13     4      28    PERIOD           .
+14     5      8     IDENT            FILE-CONTROL
+15     5      20    PERIOD           .
+16     6      12    IDENT            SELECT
+17     6      19    IDENT            SEM-FD
+18     6      26    IDENT            ASSIGN
+19     6      33    IDENT            TO
+20     6      36    STRING           "SEMFD.TXT"
+21     6      47    PERIOD           .
+22     7      8     KEYWORD          DATA
+23     7      13    KEYWORD          DIVISION
+24     7      21    PERIOD           .
+25     8      8     IDENT            FILE
+26     8      13    KEYWORD          SECTION
+27     8      20    PERIOD           .
+28     9      8     IDENT            FD
+29     9      11    IDENT            OUTRO
+30     9      16    PERIOD           .
+31     10     8     NUMBER           01
+32     10     11    IDENT            REG-OUTRO
+33     10     27    KEYWORD          PIC
+34     10     31    PICTURE-STRING   X(10)
+35     10     36    PERIOD           .
+36     11     8     KEYWORD          PROCEDURE
+37     11     18    KEYWORD          DIVISION
+38     11     26    PERIOD           .
+39     12     8     IDENT            INICIO
+40     12     14    PERIOD           .
+41     13     12    IDENT            OPEN
+42     13     17    IDENT            INPUT
+43     13     23    IDENT            ARQ-INEXISTENTE
+44     13     38    PERIOD           .
+45     14     12    IDENT            READ
+46     14     17    IDENT            SEM-FD
+47     14     23    PERIOD           .
+48     15     12    IDENT            WRITE
+49     15     18    IDENT            REG-OUTRO
+50     15     27    PERIOD           .
+51     16     12    KEYWORD          STOP
+52     16     17    KEYWORD          RUN
+53     16     20    PERIOD           .
+54     17     1     EOF              
+
+=== Erros de COPY (0) ===
+nenhum
+
+=== Erros léxicos (0) ===
+nenhum
+
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (3) ===
+[E] linha 13, col 23: arquivo 'ARQ-INEXISTENTE' não declarado em FILE-CONTROL (SELECT)
+[E] linha 14, col 17: arquivo 'SEM-FD' sem descritor FD na FILE SECTION
+[E] linha 15, col 18: arquivo do registro 'REG-OUTRO' não declarado em FILE-CONTROL (SELECT)
+
+=== Identificação (§3.1) ===
+PROGRAM-ID: SEM004
+
+Resultado: FALHA (3 erros semânticos)

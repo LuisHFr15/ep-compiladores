@@ -81,11 +81,20 @@ Arquivo: tests/error_programs/prog001_divisoes_erros.cob
 77     58     28    PERIOD           .
 78     59     1     EOF              
 
+=== Erros de COPY (0) ===
+nenhum
+
 === Erros léxicos (2) ===
 [E] linha 54, col 12: caractere inválido '@'
 [E] linha 57, col 7: indicador inválido na coluna 7: 'X'
 
+=== Erros sintáticos (0) ===
+nenhum
+
+=== Erros semânticos (0) ===
+nenhum
+
 === Identificação (§3.1) ===
-PROGRAM-ID: PROG0001
+não identificado
 
 Resultado: FALHA (2 erros léxicos)
