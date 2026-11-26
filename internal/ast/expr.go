@@ -25,6 +25,13 @@ type Ref struct {
 	Name  string
 	Quals []string
 	Subs  []Expr
+	Start Expr
+	Len   Expr
+}
+
+type LengthOf struct {
+	Pos
+	Ref *Ref
 }
 
 type FuncCall struct {
@@ -51,6 +58,7 @@ func (Ref) exprNode()        {}
 func (FuncCall) exprNode()   {}
 func (Binary) exprNode()     {}
 func (Neg) exprNode()        {}
+func (LengthOf) exprNode()   {}
 
 type Cond interface {
 	Position() Pos

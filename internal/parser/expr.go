@@ -58,6 +58,9 @@ func (p *Parser) parseOperand() ast.Expr {
 		}
 		p.expect(token.RPAREN)
 		return call
+	case p.isWord("LENGTH") && p.isWordAt(1, "OF"):
+		p.pos += 2
+		return &ast.LengthOf{Pos: pos, Ref: p.parseRef()}
 	case t.Type == token.IDENT:
 		return p.parseRef()
 	}
@@ -73,8 +76,19 @@ func (p *Parser) parseRef() *ast.Ref {
 		p.pos++
 		ref.Quals = append(ref.Quals, p.expectIdent("qualificador").Text)
 	}
-	if p.cur().Type == token.LPAREN {
+	for p.cur().Type == token.LPAREN {
 		p.pos++
+		first := p.parseExpr()
+		if p.accept(token.COLON) {
+			ref.Start = first
+			if p.cur().Type != token.RPAREN {
+				ref.Len = p.parseExpr()
+			}
+			p.expect(token.RPAREN)
+			break
+		}
+		ref.Subs = append(ref.Subs, first)
+		p.accept(token.COMMA)
 		for p.cur().Type != token.RPAREN {
 			ref.Subs = append(ref.Subs, p.parseExpr())
 			p.accept(token.COMMA)

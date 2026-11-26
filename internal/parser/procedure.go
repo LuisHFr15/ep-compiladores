@@ -12,7 +12,7 @@ var verbs = map[string]bool{
 	"MULTIPLY": true, "DIVIDE": true, "COMPUTE": true, "IF": true, "EVALUATE": true,
 	"PERFORM": true, "GO": true, "STOP": true, "EXIT": true, "CONTINUE": true,
 	"GOBACK": true, "SET": true, "SEARCH": true, "INSPECT": true, "OPEN": true,
-	"CLOSE": true, "READ": true, "WRITE": true, "START": true,
+	"CLOSE": true, "READ": true, "WRITE": true, "START": true, "INITIALIZE": true,
 }
 
 var stopWords = map[string]bool{
@@ -20,6 +20,7 @@ var stopWords = map[string]bool{
 	"REMAINDER": true, "ON": true, "NOT": true, "AT": true, "WHEN": true,
 	"WITH": true, "UNTIL": true, "INVALID": true, "ROUNDED": true, "ELSE": true,
 	"END": true, "THEN": true, "KEY": true, "INDEXED": true, "OTHER": true,
+	"REPLACING": true,
 }
 
 func (p *Parser) isVerb() bool {
@@ -171,6 +172,8 @@ func (p *Parser) parseStatement() ast.Stmt {
 		return p.parseSearch(pos)
 	case "INSPECT":
 		return p.parseInspect(pos)
+	case "INITIALIZE":
+		return p.parseInitialize(pos)
 	case "OPEN":
 		return p.parseOpen(pos)
 	case "CLOSE":
@@ -351,9 +354,9 @@ func (p *Parser) parseEvaluate(pos ast.Pos) ast.Stmt {
 			continue
 		}
 		w := &ast.When{Pos: wpos}
-		w.Values = append(w.Values, p.parseOperand())
+		w.Alts = append(w.Alts, p.parseWhenAlt())
 		for p.acceptWord("OR") {
-			w.Values = append(w.Values, p.parseOperand())
+			w.Alts = append(w.Alts, p.parseWhenAlt())
 		}
 		w.Body = p.requireStatements("WHEN")
 		e.Whens = append(e.Whens, w)
@@ -365,18 +368,72 @@ func (p *Parser) parseEvaluate(pos ast.Pos) ast.Stmt {
 	return e
 }
 
-func (p *Parser) parsePerform(pos ast.Pos) ast.Stmt {
-	if p.cur().Type != token.IDENT || p.isWord("UNTIL") || p.isWord("VARYING") {
-		p.fail("PERFORM em linha não é suportado; esperado nome de parágrafo, encontrado %s", p.describe(p.cur()))
+func (p *Parser) parseWhenAlt() ast.WhenAlt {
+	save := p.pos
+	if p.isWord("IS") || p.isWord("NOT") {
+		p.acceptWord("IS")
+		neg := p.acceptWord("NOT")
+		if p.isWord("NUMERIC") || p.isWord("ALPHABETIC") {
+			class := p.cur().Literal
+			p.pos++
+			return ast.WhenAlt{Class: class, Neg: neg}
+		}
+		p.pos = save
 	}
-	target := p.expectIdent("nome de parágrafo")
-	s := &ast.Perform{Pos: pos, Target: &target}
-	if p.acceptWord("THRU") || p.acceptWord("THROUGH") {
-		thru := p.expectIdent("nome de parágrafo")
-		s.Thru = &thru
+	if op := p.parseRelOp(); op != "" {
+		return ast.WhenAlt{Op: op, Value: p.parseExpr()}
+	}
+	return ast.WhenAlt{Op: "=", Value: p.parseOperand()}
+}
+
+func (p *Parser) parsePerform(pos ast.Pos) ast.Stmt {
+	s := &ast.Perform{Pos: pos}
+	if p.cur().Type == token.IDENT && !p.isWord("UNTIL") && !p.isWord("VARYING") {
+		target := p.expectIdent("nome de parágrafo")
+		s.Target = &target
+		if p.acceptWord("THRU") || p.acceptWord("THROUGH") {
+			thru := p.expectIdent("nome de parágrafo")
+			s.Thru = &thru
+		}
+	}
+	if p.acceptWord("VARYING") {
+		v := &ast.Varying{Var: p.parseRef()}
+		p.expectWord("FROM")
+		v.From = p.parseExpr()
+		p.expectWord("BY")
+		v.By = p.parseExpr()
+		s.Varying = v
+		if !p.isWord("UNTIL") {
+			p.fail("esperado UNTIL em PERFORM VARYING, encontrado %s", p.describe(p.cur()))
+		}
 	}
 	if p.acceptWord("UNTIL") {
 		s.Until = p.parseCond()
+	}
+	if s.Target == nil {
+		if s.Until == nil {
+			p.fail("PERFORM em linha exige UNTIL ou VARYING; esperado nome de parágrafo, encontrado %s", p.describe(p.cur()))
+		}
+		s.Body = p.requireStatements("PERFORM")
+		p.expectWord("END-PERFORM")
+	}
+	return s
+}
+
+func (p *Parser) parseInitialize(pos ast.Pos) ast.Stmt {
+	s := &ast.Initialize{Pos: pos, Targets: p.parseRefs()}
+	if !p.acceptWord("REPLACING") {
+		return s
+	}
+	for p.isWord("ALPHANUMERIC") || p.isWord("NUMERIC") || p.isWord("ALPHABETIC") {
+		cat := p.cur().Literal
+		p.pos++
+		p.acceptWord("DATA")
+		p.expectWord("BY")
+		s.Replacing = append(s.Replacing, ast.InitReplace{Category: cat, Value: p.parseOperand()})
+	}
+	if len(s.Replacing) == 0 {
+		p.fail("esperado ALPHANUMERIC, NUMERIC ou ALPHABETIC em INITIALIZE REPLACING, encontrado %s", p.describe(p.cur()))
 	}
 	return s
 }
@@ -429,7 +486,16 @@ func (p *Parser) parseRegion() ast.Region {
 }
 
 func (p *Parser) parseInspect(pos ast.Pos) ast.Stmt {
-	in := &ast.Inspect{Pos: pos, Target: p.parseRef()}
+	in := &ast.Inspect{Pos: pos}
+	if p.isWord("FUNCTION") {
+		call, ok := p.parseOperand().(*ast.FuncCall)
+		if !ok {
+			p.fail("esperado função em INSPECT")
+		}
+		in.Func = call
+	} else {
+		in.Target = p.parseRef()
+	}
 	switch {
 	case p.acceptWord("TALLYING"):
 		counter := p.parseRef()
