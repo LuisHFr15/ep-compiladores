@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	"ep-compiladores/internal/ast"
+	"ep-compiladores/internal/diagnostic"
 	"ep-compiladores/internal/lexer"
 	"ep-compiladores/internal/token"
 )
 
-func Render(path string, stream *lexer.TokenStream, program *ast.Program, parseErr error) string {
+func Render(path string, stream *lexer.TokenStream, program *ast.Program, parseDiags []diagnostic.Diagnostic) string {
 	var b strings.Builder
 
 	fmt.Fprintf(&b, "Arquivo: %s\n\n", path)
@@ -29,18 +30,26 @@ func Render(path string, stream *lexer.TokenStream, program *ast.Program, parseE
 	}
 
 	b.WriteString("\n=== Identificação (§3.1) ===\n")
-	if parseErr != nil {
-		b.WriteString(parseErr.Error() + "\n")
-	} else {
+	if program != nil && program.Identification != nil {
 		fmt.Fprintf(&b, "PROGRAM-ID: %s\n", program.Identification.ProgramID)
+	} else {
+		b.WriteString("não identificado\n")
+	}
+
+	fmt.Fprintf(&b, "\n=== Erros sintáticos (%d) ===\n", len(parseDiags))
+	if len(parseDiags) == 0 {
+		b.WriteString("nenhum\n")
+	}
+	for _, d := range parseDiags {
+		b.WriteString(d.String() + "\n")
 	}
 
 	b.WriteString("\nResultado: ")
 	switch {
 	case stream.HasErrors():
 		fmt.Fprintf(&b, "FALHA (%d erros léxicos)\n", len(stream.Diagnostics))
-	case parseErr != nil:
-		b.WriteString("FALHA (erro sintático)\n")
+	case len(parseDiags) > 0:
+		fmt.Fprintf(&b, "FALHA (%d erros sintáticos)\n", len(parseDiags))
 	default:
 		b.WriteString("SUCESSO\n")
 	}

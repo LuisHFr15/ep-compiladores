@@ -33,8 +33,8 @@ func main() {
 	}
 
 	stream := lexer.New(string(content), *debug).Tokenize()
-	program, parseErr := parser.New(stream.Tokens).ParseProgram()
-	text := report.Render(path, stream, program, parseErr)
+	program, parseDiags := parser.New(stream.Tokens).ParseProgram()
+	text := report.Render(path, stream, program, parseDiags)
 
 	fmt.Print(text)
 
@@ -49,7 +49,7 @@ func main() {
 		}
 	}
 
-	if stream.HasErrors() || parseErr != nil {
+	if stream.HasErrors() || len(parseDiags) > 0 {
 		os.Exit(1)
 	}
 }
