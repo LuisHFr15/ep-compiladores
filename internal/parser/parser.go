@@ -197,11 +197,6 @@ func (p *Parser) ParseProgram() (*ast.Program, []diagnostic.Diagnostic) {
 	return prog, p.diags
 }
 
-var identParagraphs = map[string]bool{
-	"AUTHOR": true, "INSTALLATION": true, "DATE-WRITTEN": true,
-	"DATE-COMPILED": true, "SECURITY": true, "REMARKS": true,
-}
-
 func (p *Parser) parseIdentification() *ast.IdentificationDivision {
 	pos := p.here()
 	p.expect(token.IDENTIFICATION)
@@ -212,7 +207,7 @@ func (p *Parser) parseIdentification() *ast.IdentificationDivision {
 	name := p.expectIdent("nome do programa")
 	p.expect(token.PERIOD)
 
-	for p.cur().Type == token.IDENT && identParagraphs[p.cur().Literal] && p.peek(1).Type == token.PERIOD {
+	for p.cur().Type == token.IDENT && token.IsIdentParagraph(p.cur().Literal) && p.peek(1).Type == token.PERIOD {
 		p.syncPeriod()
 		p.syncPeriod()
 	}

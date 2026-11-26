@@ -23,13 +23,14 @@ type openLiteral struct {
 }
 
 type Lexer struct {
-	lines   []string
-	stream  *TokenStream
-	picture bool
-	debug   bool
-	open    *openLiteral
-	lastLn  int
-	lastEnd int
+	lines     []string
+	stream    *TokenStream
+	picture   bool
+	debug     bool
+	open      *openLiteral
+	lastLn    int
+	lastEnd   int
+	pastIdent bool
 }
 
 func New(input string, debug bool) *Lexer {
@@ -135,7 +136,9 @@ func (l *Lexer) scan(code []rune, i, lineNo int) {
 			l.emit(token.RPAREN, ")", lineNo, col)
 			i++
 		default:
-			l.errorf(lineNo, col, "caractere inválido '%c'", c)
+			if !l.inFreeText() {
+				l.errorf(lineNo, col, "caractere inválido '%c'", c)
+			}
 			i++
 		}
 	}
@@ -319,6 +322,14 @@ func (l *Lexer) prevIsOperand() bool {
 }
 
 func (l *Lexer) emit(t token.Type, literal string, line, col int) {
+	if t == token.DIVISION {
+		if n := len(l.stream.Tokens); n > 0 {
+			switch l.stream.Tokens[n-1].Type {
+			case token.ENVIRONMENT, token.DATA, token.PROCEDURE:
+				l.pastIdent = true
+			}
+		}
+	}
 	l.stream.Tokens = append(l.stream.Tokens, token.Token{Type: t, Literal: literal, Line: line, Col: col})
 }
 
@@ -381,4 +392,19 @@ func isMergeMarker(line []rune) bool {
 		}
 	}
 	return false
+}
+
+func (l *Lexer) inFreeText() bool {
+	if l.pastIdent {
+		return false
+	}
+	t := l.stream.Tokens
+	k := len(t) - 1
+	for k >= 0 && t[k].Type != token.PERIOD {
+		k--
+	}
+	if k < 1 || t[k-1].Type != token.IDENT || !token.IsIdentParagraph(t[k-1].Literal) {
+		return false
+	}
+	return k == 1 || t[k-2].Type == token.PERIOD
 }
