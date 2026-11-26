@@ -742,6 +742,22 @@ rin_ok:
 rin_e:
         jr   $ra
 
+# rt_reverse(a0=dst, a1=src, a2=len)
+rt_reverse:
+        li   $t0, 0
+rrv_l:
+        bge  $t0, $a2, rrv_e
+        subu $t1, $a2, $t0
+        addiu $t1, $t1, -1
+        addu $t1, $a1, $t1
+        lbu  $t2, 0($t1)
+        addu $t1, $a0, $t0
+        sb   $t2, 0($t1)
+        addiu $t0, $t0, 1
+        j    rrv_l
+rrv_e:
+        jr   $ra
+
 # ===== num =====
 # Num: byte 0 = sinal (0 +, 1 -), byte 1 = escala, bytes 4..43 = 40 digitos (indice 39 = menos significativo)
         .data

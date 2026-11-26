@@ -11,13 +11,15 @@ mkdir -p tests/expected
 
 while read -r name opts; do
 	[ -z "$name" ] && continue
-	src="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl 2>/dev/null | head -1)"
+	src="$(ls tests/input_programs/"$name".cob tests/input_programs/"$name".cbl tests/feature_programs/"$name".cob 2>/dev/null | head -1)"
 	work="$tmp/$name"
 	mkdir -p "$work"
 	[ -d "tests/data/$name" ] && cp -R "tests/data/$name/." "$work/"
 	(cd "$work" && ls -A) > "$tmp/$name.before"
 
-	if ! cobc -x -std=ibm -o "$tmp/$name.bin" "$src" 2> "$tmp/$name.cobc.log"; then
+	srcs="$src"
+	[ -f "tests/drivers/$name.cob" ] && srcs="tests/drivers/$name.cob $src"
+	if ! cobc -x -std=ibm -I tests/input_programs -o "$tmp/$name.bin" $srcs 2> "$tmp/$name.cobc.log"; then
 		echo "[FALHA] cobc nao compilou $src"
 		cat "$tmp/$name.cobc.log"
 		continue

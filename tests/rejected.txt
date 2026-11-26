@@ -1,4 +1,3 @@
-CAD0002A copybook 'COPY002A'
 CAD0005A conflito de merge
 PROG024A copybook 'COD001A'
 sem001_move_alfabetico MOVE inválido
@@ -9,6 +8,5 @@ sem003_destinos 'FALTA' não declarado
 sem004_arquivos 'ARQ-INEXISTENTE' não declarado em FILE-CONTROL
 sem004_arquivos sem descritor FD
 sem004_arquivos arquivo do registro 'REG-OUTRO'
-CAD0002A caractere inválido ':'
 copy002_replacing_sem_by esperado BY depois de
 copy003_replacing_leading não suportado em REPLACING
