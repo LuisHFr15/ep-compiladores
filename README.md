@@ -166,7 +166,8 @@ Também são verificados: identificador não declarado, subscritos faltando ou s
 | Não diferencia maiúsculas de minúsculas | Padrão COBOL; literais são preservados. |
 | Linhas `D` ignoradas; `-debug` as inclui | Padrão COBOL. |
 | Saídas de referência do **GnuCOBOL** (`-std=ibm`) | Fonte de verdade para `DISPLAY` de campos com sinal, `ACCEPT` numérico e arquivos. |
-| `CAD0005A`, `PROG024A` rejeitados | Marcadores de merge no fonte; `COPY` de copybook inexistente e `CALL 'PROGDATA'`. |
+| `PROG024A` rejeitado | `COPY` do copybook `COD001A` (inexistente) e `CALL 'PROGDATA'`. |
+| `CAD0005A` com o conflito de merge resolvido | O fonte tinha `<<<<<<< HEAD`/`=======`/`>>>>>>>` nas linhas 97–101; ficou o lado `HEAD` (os dois lados eram o mesmo `DISPLAY`, mudava só um espaço). O erro continua coberto por `tests/lexical_programs/lex002_conflito_merge.cob`. |
 | `COPY002A.cpy` inferido do uso | O copybook de `CAD0002A` não existe no repositório; foi criado a partir dos nomes e tamanhos que o programa usa. |
 
 ---
@@ -182,7 +183,7 @@ Os programas de validação estão em `tests/input_programs/`: os 7 do professor
 | `scripts/run-error-tests.sh` | Confere os erros léxicos inseridos (`tests/error_programs/`), os erros semânticos (`tests/semantic_programs/`) e a rejeição dos 3 programas de `tests/rejected.txt`. |
 | `scripts/gen-reference.sh` | Regenera `tests/expected/` com o `cobc`. |
 
-Resultado atual: **13/13** programas com saída idêntica à do GnuCOBOL; **7/7** programas com erros léxicos detectados; **12/12** rejeições esperadas; **2/2** programas aceitos (texto livre e `COPY REPLACING`).
+Resultado atual: **14/14** programas com saída idêntica à do GnuCOBOL; **7/7** programas com erros léxicos detectados; **12/12** rejeições esperadas; **2/2** programas aceitos (texto livre e `COPY REPLACING`).
 
 | Programa | Recursos |
 |---|---|
@@ -192,6 +193,7 @@ Resultado atual: **13/13** programas com saída idêntica à do GnuCOBOL; **7/7*
 | `prog007` | Arquivo indexado, `START`, `INVALID KEY`, `EVALUATE`, `FILE STATUS` |
 | `CAIXAREG`, `CALCMD01` | Decimais, `COMPUTE`, `PERFORM` recursivo |
 | `CAD0002A` | `COPY`, `LINKAGE`/`USING`/`GOBACK`, referência por posição `X(i:n)`, `PERFORM VARYING`, `INITIALIZE`, `EVALUATE` com `WHEN LESS`/`GREATER`/`IS NOT NUMERIC`, `INSPECT FUNCTION REVERSE` |
+| `CAD0005A` | `PERFORM VARYING` com tabela, `IF` sem `END-IF` dentro do laço, literal continuado na coluna 72, arquivo de linha lido e regravado (duas execuções) |
 | `feat001_refmod_varying` | Os mesmos recursos novos em um programa curto (`tests/feature_programs/`) |
 
 ---

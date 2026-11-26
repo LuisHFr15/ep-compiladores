@@ -168,7 +168,8 @@ It also checks undeclared identifiers, missing or extra subscripts, `SEARCH` wit
 | Case-insensitive | COBOL standard; literals are preserved. |
 | `D` lines ignored; `-debug` includes them | COBOL standard. |
 | **GnuCOBOL** reference outputs (`-std=ibm`) | Source of truth for signed `DISPLAY`, numeric `ACCEPT` and files. |
-| `CAD0005A`, `PROG024A` rejected | Merge markers in the source; `COPY` of a missing copybook and `CALL 'PROGDATA'`. |
+| `PROG024A` rejected | `COPY` of the missing `COD001A` copybook and `CALL 'PROGDATA'`. |
+| `CAD0005A` with the merge conflict resolved | The source had `<<<<<<< HEAD`/`=======`/`>>>>>>>` on lines 97–101; the `HEAD` side was kept (both sides were the same `DISPLAY`, differing by one space). The error is still covered by `tests/lexical_programs/lex002_conflito_merge.cob`. |
 | `COPY002A.cpy` inferred from usage | `CAD0002A`'s copybook is not in the repository; it was written from the names and sizes the program uses. |
 
 ---
@@ -184,7 +185,7 @@ Validation programs live in `tests/input_programs/`: the professor's 7 (from [eb
 | `scripts/run-error-tests.sh` | Checks the inserted lexical errors (`tests/error_programs/`), the semantic errors (`tests/semantic_programs/`) and the rejection of the 3 programs in `tests/rejected.txt`. |
 | `scripts/gen-reference.sh` | Regenerates `tests/expected/` with `cobc`. |
 
-Current result: **13/13** programs with output identical to GnuCOBOL; **7/7** programs with lexical errors detected; **12/12** expected rejections; **2/2** accepted programs (free text and `COPY REPLACING`).
+Current result: **14/14** programs with output identical to GnuCOBOL; **7/7** programs with lexical errors detected; **12/12** expected rejections; **2/2** accepted programs (free text and `COPY REPLACING`).
 
 ---
 
