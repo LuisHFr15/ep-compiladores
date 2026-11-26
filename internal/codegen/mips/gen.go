@@ -13,7 +13,7 @@ var routineGroup = map[string]string{
 	"rt_print": "core", "rt_print_nl": "core", "rt_print_signed": "core", "rt_print_index": "core",
 	"rt_readline": "core", "rt_exit": "core",
 	"rt_move_alnum": "str", "rt_fill": "str", "rt_cmp_alnum": "str", "rt_cmp_fill": "str",
-	"rt_upper": "str", "rt_accept_alnum": "str", "rt_is_numeric": "str",
+	"rt_upper": "str", "rt_reverse": "str", "rt_accept_alnum": "str", "rt_is_numeric": "str",
 	"rt_load": "num", "rt_store": "num", "rt_add": "num", "rt_sub": "num", "rt_mul": "num",
 	"rt_div": "num", "rt_pow": "num", "rt_cmp": "num", "rt_neg": "num", "rt_num_to_int": "num",
 	"rt_num_from_int": "num", "rt_accept_num": "num", "rt_copy": "num", "rt_get_int": "num",

@@ -51,6 +51,8 @@ func (g *gen) stmt(s ast.Stmt) {
 		g.search(s)
 	case *ast.Inspect:
 		g.inspect(s)
+	case *ast.Initialize:
+		g.initialize(s)
 	case *ast.Open:
 		g.open(s)
 	case *ast.Close:
@@ -94,11 +96,11 @@ func (g *gen) displayItem(e ast.Expr) {
 		switch {
 		case sym.IsIndex:
 			g.call("rt_print_index")
-		case sym.Cat == semantic.CatNumeric && sym.Pic.Signed:
+		case sym.Cat == semantic.CatNumeric && sym.Pic.Signed && e.Start == nil:
 			g.ins("li $a1, %d", sym.ElemSize)
 			g.call("rt_print_signed")
 		default:
-			g.ins("li $a1, %d", sym.ElemSize)
+			g.ins("li $a1, %d", g.refSize(e))
 			g.call("rt_print")
 		}
 	default:
@@ -109,7 +111,7 @@ func (g *gen) displayItem(e ast.Expr) {
 func (g *gen) accept(a *ast.Accept) {
 	sym := g.symOf(a.Target)
 	g.addrOf("$a0", a.Target)
-	if sym.Cat == semantic.CatNumeric {
+	if sym.Cat == semantic.CatNumeric && a.Target.Start == nil {
 		flags := flagsOf(sym)
 		if g.info.DecimalComma {
 			flags |= 0x400
@@ -119,14 +121,13 @@ func (g *gen) accept(a *ast.Accept) {
 		g.call("rt_accept_num")
 		return
 	}
-	g.ins("li $a1, %d", sym.ElemSize)
+	g.ins("li $a1, %d", g.refSize(a.Target))
 	g.call("rt_accept_alnum")
 }
 
 func (g *gen) fillTarget(t *ast.Ref, b byte) {
-	sym := g.symOf(t)
 	g.addrOf("$a0", t)
-	g.ins("li $a1, %d", sym.ElemSize)
+	g.ins("li $a1, %d", g.refSize(t))
 	g.ins("li $a2, %d", b)
 	g.call("rt_fill")
 }
@@ -138,6 +139,10 @@ func (g *gen) move(src ast.Expr, t *ast.Ref) {
 	}
 	if f := asFig(src); f != nil {
 		g.fillTarget(t, figByte(f.Kind))
+		return
+	}
+	if t.Start != nil {
+		g.moveAlnum(src, t, dst)
 		return
 	}
 	numSrc := g.isNumeric(src)
@@ -169,7 +174,7 @@ func (g *gen) isAlnumRef(e ast.Expr) bool {
 		return false
 	}
 	sym := g.symOf(r)
-	return sym != nil && (sym.Cat == semantic.CatAlnum || sym.Cat == semantic.CatAlpha)
+	return sym != nil && (r.Start != nil || sym.Cat == semantic.CatAlnum || sym.Cat == semantic.CatAlpha)
 }
 
 func (g *gen) moveAlnum(src ast.Expr, t *ast.Ref, dst *semantic.Symbol) {
@@ -180,7 +185,7 @@ func (g *gen) moveAlnum(src ast.Expr, t *ast.Ref, dst *semantic.Symbol) {
 	g.loadStr("$a2", s)
 	g.ins("lw $a0, 0($sp)")
 	g.ins("addiu $sp, $sp, 4")
-	g.ins("li $a1, %d", dst.ElemSize)
+	g.ins("li $a1, %d", g.refSize(t))
 	g.ins("li $a3, %d", s.size)
 	g.call("rt_move_alnum")
 }
@@ -389,9 +394,13 @@ func (g *gen) evaluate(s *ast.Evaluate) {
 	endL := g.newLabel("V")
 	for _, w := range s.Whens {
 		body, next := g.newLabel("V"), g.newLabel("V")
-		for _, v := range w.Values {
+		for _, a := range w.Alts {
 			nxt := g.newLabel("V")
-			g.cond(&ast.Rel{Pos: w.Pos, L: s.Subject, Op: "=", R: v}, body, nxt)
+			var c ast.Cond = &ast.Rel{Pos: w.Pos, L: s.Subject, Op: a.Op, R: a.Value}
+			if a.Class != "" {
+				c = &ast.ClassCond{Pos: w.Pos, X: s.Subject, Class: a.Class, Neg: a.Neg}
+			}
+			g.cond(c, body, nxt)
 			g.label(nxt)
 		}
 		g.ins("j %s", next)
@@ -405,35 +414,97 @@ func (g *gen) evaluate(s *ast.Evaluate) {
 }
 
 func (g *gen) perform(s *ast.Perform) {
-	idx := g.info.LabelIndex[s.Target.Text]
-	last := idx
-	if s.Thru != nil {
-		last = g.info.LabelIndex[s.Thru.Text]
+	if s.Varying != nil {
+		g.tmp = 0
+		g.storeNum(g.evalNum(s.Varying.From), s.Varying.Var, 0)
 	}
-	end := g.info.SectionEnd(last)
-
 	test, body, done := g.newLabel("F"), g.newLabel("F"), g.newLabel("F")
 	if s.Until != nil {
 		g.label(test)
+		g.tmp = 0
 		g.cond(s.Until, done, body)
 		g.label(body)
 	}
-	ret := g.newLabel("R")
-	g.ins("la $t0, %s", ret)
-	g.ins("la $t1, %s", g.stmtLabelE(end))
-	g.ins("lw $t2, RT_PSP")
-	g.ins("la $t3, RT_PSTK")
-	g.ins("addu $t3, $t3, $t2")
-	g.ins("sw $t0, 0($t3)")
-	g.ins("sw $t1, 4($t3)")
-	g.ins("addiu $t2, $t2, 8")
-	g.ins("sw $t2, RT_PSP")
-	g.ins("j %s", g.stmtLabelP(idx))
-	g.label(ret)
+	if s.Target != nil {
+		idx := g.info.LabelIndex[s.Target.Text]
+		last := idx
+		if s.Thru != nil {
+			last = g.info.LabelIndex[s.Thru.Text]
+		}
+		end := g.info.SectionEnd(last)
+		ret := g.newLabel("R")
+		g.ins("la $t0, %s", ret)
+		g.ins("la $t1, %s", g.stmtLabelE(end))
+		g.ins("lw $t2, RT_PSP")
+		g.ins("la $t3, RT_PSTK")
+		g.ins("addu $t3, $t3, $t2")
+		g.ins("sw $t0, 0($t3)")
+		g.ins("sw $t1, 4($t3)")
+		g.ins("addiu $t2, $t2, 8")
+		g.ins("sw $t2, RT_PSP")
+		g.ins("j %s", g.stmtLabelP(idx))
+		g.label(ret)
+	} else {
+		g.stmts(s.Body)
+	}
+	if s.Varying != nil {
+		g.tmp = 0
+		cur := g.evalNum(s.Varying.Var)
+		by := g.evalNum(s.Varying.By)
+		t := g.newTmp()
+		g.op3("rt_add", t, cur, by)
+		g.storeNum(t, s.Varying.Var, 0)
+	}
 	if s.Until != nil {
 		g.ins("j %s", test)
 		g.label(done)
 	}
+}
+
+func (g *gen) initialize(s *ast.Initialize) {
+	for _, t := range s.Targets {
+		if sym := g.symOf(t); sym != nil {
+			g.initLeaves(sym, t, s.Replacing)
+		}
+	}
+}
+
+func (g *gen) initLeaves(sym *semantic.Symbol, t *ast.Ref, repl []ast.InitReplace) {
+	if len(sym.Children) == 0 {
+		g.initLeaf(sym, t, repl)
+		return
+	}
+	for _, c := range sym.Children {
+		if c.Name == "" {
+			continue
+		}
+		if c.Occurs > 0 {
+			g.errf(t.Pos, "INITIALIZE de item com OCCURS ('%s') não suportado", c.Name)
+			continue
+		}
+		ref := &ast.Ref{Pos: t.Pos, Name: c.Name, Subs: t.Subs}
+		g.info.Refs[ref] = c
+		g.initLeaves(c, ref, repl)
+	}
+}
+
+func (g *gen) initLeaf(sym *semantic.Symbol, t *ast.Ref, repl []ast.InitReplace) {
+	g.tmp = 0
+	cat := "ALPHANUMERIC"
+	var src ast.Expr = &ast.Figurative{Pos: t.Pos, Kind: "SPACE"}
+	switch sym.Cat {
+	case semantic.CatNumeric:
+		cat = "NUMERIC"
+		src = &ast.Figurative{Pos: t.Pos, Kind: "ZERO"}
+	case semantic.CatAlpha:
+		cat = "ALPHABETIC"
+	}
+	for _, r := range repl {
+		if r.Category == cat {
+			src = r.Value
+		}
+	}
+	g.move(src, t)
 }
 
 func (g *gen) set(s *ast.Set) {

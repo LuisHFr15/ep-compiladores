@@ -63,11 +63,18 @@ func (g *gen) insStore(off int, e ast.Expr) {
 
 func (g *gen) insCall(s *ast.Inspect, kind int, pat, repl ast.Expr, r ast.Region) {
 	g.tmp = 0
-	tsym := g.symOf(s.Target)
-	g.addrOf("$a0", s.Target)
+	var tsize int
+	if s.Func != nil {
+		st := g.strOf(s.Func)
+		g.loadStr("$a0", st)
+		tsize = st.size
+	} else {
+		g.addrOf("$a0", s.Target)
+		tsize = g.refSize(s.Target)
+	}
 	g.ins("la $t9, RT_INS")
 	g.ins("sw $a0, 0($t9)")
-	g.ins("li $t0, %d", tsym.ElemSize)
+	g.ins("li $t0, %d", tsize)
 	g.ins("sw $t0, 4($t9)")
 	g.ins("li $t0, %d", kind)
 	g.ins("sw $t0, 8($t9)")
