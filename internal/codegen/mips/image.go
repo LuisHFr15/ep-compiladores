@@ -31,7 +31,7 @@ func (g *gen) dataImage() string {
 			if j > i {
 				b.WriteString(",")
 			}
-			fmt.Fprintf(&b, "%d", img[j])
+			fmt.Fprintf(&b, "%d", int8(img[j]))
 		}
 		b.WriteString("\n")
 	}

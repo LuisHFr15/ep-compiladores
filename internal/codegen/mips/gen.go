@@ -18,6 +18,7 @@ var routineGroup = map[string]string{
 	"rt_div": "num", "rt_pow": "num", "rt_cmp": "num", "rt_neg": "num", "rt_num_to_int": "num",
 	"rt_num_from_int": "num", "rt_accept_num": "num", "rt_copy": "num", "rt_get_int": "num",
 	"rt_put_int": "num", "rt_inspect": "inspect",
+	"rt_f_open": "file", "rt_f_close": "file", "rt_f_read": "file", "rt_f_readkey": "file", "rt_f_write": "file", "rt_f_start": "file",
 	"rt_edit": "edit",
 }
 
@@ -32,7 +33,6 @@ type gen struct {
 	tmp    int
 	maxTmp int
 	errs   []string
-	files  *fileGen
 }
 
 func Generate(info *semantic.Info) (string, error) {
@@ -133,6 +133,10 @@ func (g *gen) assemble() string {
 	if need["edit"] {
 		need["num"] = true
 	}
+	if need["file"] {
+		need["num"] = true
+		need["str"] = true
+	}
 	b.WriteString(runtimeText(need))
 	return b.String()
 }
@@ -154,7 +158,7 @@ func (g *gen) bytesLabel(prefix string, data []byte) string {
 		if i > 0 {
 			g.data.WriteString(",")
 		}
-		fmt.Fprintf(&g.data, "%d", c)
+		fmt.Fprintf(&g.data, "%d", int8(c))
 	}
 	g.data.WriteString("\n")
 	return l

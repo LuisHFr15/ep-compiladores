@@ -37,8 +37,7 @@ while read -r name opts; do
 		in=/dev/null
 		[ -f "tests/stdin/$name.in$suffix" ] && in="$root/tests/stdin/$name.in$suffix"
 		[ -n "$suffix" ] && [ "$in" = /dev/null ] && continue
-		(cd "$work" && perl -e 'alarm shift; exec @ARGV' 120 java -Dfile.encoding=ISO-8859-1 -Dstdout.encoding=ISO-8859-1 -jar "$mars" nc sm "$root/$asm" < "$in" > "$tmp/$name.out$suffix" 2> "$tmp/$name.err$suffix")
-		perl -0777 -pi -e 's/\n\z//' "$tmp/$name.out$suffix"
+		(cd "$work" && perl -e 'alarm shift; exec @ARGV' 120 java -Dfile.encoding=ISO-8859-1 -Dstdout.encoding=ISO-8859-1 -jar "$mars" nc me sm "$root/$asm" < "$in" > "$tmp/$name.out$suffix" 2> "$tmp/$name.err$suffix")
 		if ! cmp -s "$tmp/$name.out$suffix" "tests/expected/$name.out$suffix"; then
 			ok=0
 			echo "[FALHA] $name: saida$suffix difere"
